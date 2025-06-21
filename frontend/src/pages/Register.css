@@ -1,0 +1,193 @@
+:root {
+    --primary: #3498db;
+    --secondary: #2980b9;
+    --accent: #e74c3c;
+    --light: #ecf0f1;
+    --dark: #2c3e50;
+    --success: #2ecc71;
+    --warning: #f39c12;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  body {
+    background-color: var(--light);
+    color: var(--dark);
+  }
+  
+  .register-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 80px 20px;
+  }
+  
+  .register-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+    padding: 40px;
+  }
+  
+  .card-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .user-type-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+  
+  .user-type-toggle button {
+    padding: 10px 20px;
+    background-color: transparent;
+    border: 2px solid var(--primary);
+    border-radius: 5px;
+    font-weight: bold;
+    color: var(--primary);
+    cursor: pointer;
+  }
+  
+  .user-type-toggle button.active {
+    background-color: var(--primary);
+    color: white;
+  }
+  
+  .form-section {
+    margin-bottom: 30px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: border 0.3s;
+  }
+  
+  .input-error {
+    border-color: var(--accent);
+  }
+  
+  .error-text {
+    color: var(--accent);
+    font-size: 14px;
+    margin-top: 5px;
+  }
+  
+  .success-message {
+    background-color: var(--success);
+    color: white;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .form-actions {
+    text-align: center;
+  }
+  
+  .btn-primary {
+    background-color: var(--primary);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--secondary);
+  }
+  
+  .login-link {
+    margin-top: 15px;
+    font-size: 14px;
+  }
+  
+  .login-link a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+  
+  .login-link a:hover {
+    text-decoration: underline;
+  }
+  /* Add these to your Register.css file */
+.error-text {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    margin-bottom: 0;
+  }
+  
+  .input-error {
+    border: 1px solid #d32f2f !important;
+    background-color: rgba(211, 47, 47, 0.05);
+  }
+  
+  .submit-error {
+    background-color: rgba(211, 47, 47, 0.1);
+    border-left: 4px solid #d32f2f;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  }
+  
+  .success-message {
+    background-color: rgba(76, 175, 80, 0.1);
+    border-left: 4px solid #4caf50;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    color: #2e7d32;
+  }
+  
+  .debug-info {
+    background-color: #f5f5f5;
+    border: 1px dashed #ccc;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    overflow: auto;
+    max-height: 200px;
+    font-family: monospace;
+    font-size: 0.85rem;
+  }
+  
+  .debug-info pre {
+    margin: 0;
+    white-space: pre-wrap;
+  }

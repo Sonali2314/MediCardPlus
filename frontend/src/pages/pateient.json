@@ -1,0 +1,11 @@
+{
+    "email": "patient@example.com",
+    "password": "password123",
+    "role": "patient",
+    "fullName": "John Doe",
+    "age": 30,
+    "gender": "Male",
+    "contactNumber": "1234567890",
+    "address": "123 Main St",
+    "bloodGroup": "O+"
+  }

@@ -1,0 +1,295 @@
+/* Global Styles */
+/* :root {
+    --primary-color: #4361ee;
+    --secondary-color: #3f37c9;
+    --accent-color: #4cc9f0;
+    --warning-color: #f72585;
+    --success-color: #4caf50;
+    --light-bg: #f8f9fa;
+    --dark-bg: #212529;
+    --text-primary: #333;
+    --text-secondary: #6c757d;
+    --border-color: #dee2e6;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background-color: var(--light-bg);
+  }
+  
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+  
+  p {
+    margin-bottom: 1rem;
+  }
+  
+  a {
+    color: var(--primary-color);
+    text-decoration: none;
+  }
+  
+  a:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+  }
+   */
+  /* Form Styles */
+  input, select, textarea {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--text-primary);
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid var(--border-color);
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    margin-bottom: 1rem;
+  }
+  
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--primary-color);
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+  }
+  
+  label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+  
+  /* Button Styles */
+  .btn {
+    display: inline-block;
+    font-weight: 400;
+    color: #fff;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+  
+  .btn:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+  }
+  
+  .btn-secondary {
+    background-color: var(--text-secondary);
+    border-color: var(--text-secondary);
+  }
+  
+  .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #5a6268;
+  }
+  
+  .btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+  }
+  
+  .btn-warning {
+    background-color: var(--warning-color);
+    border-color: var(--warning-color);
+  }
+  
+  /* Card Styles */
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-header {
+    padding: 1rem;
+    margin-bottom: 0;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .card-body {
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1.25rem;
+  }
+  
+  .card-footer {
+    padding: 0.75rem 1.25rem;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-top: 1px solid var(--border-color);
+  }
+  
+  /* Dashboard Layout */
+  .dashboard {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    min-height: 100vh;
+  }
+  
+  .sidebar {
+    background-color: var(--dark-bg);
+    color: #fff;
+    padding: 1rem;
+  }
+  
+  .sidebar-nav {
+    list-style: none;
+  }
+  
+  .sidebar-nav li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .sidebar-nav a {
+    color: #fff;
+    display: block;
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+  }
+  
+  .sidebar-nav a:hover, .sidebar-nav a.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+  }
+  
+  .main-content {
+    padding: 2rem;
+  }
+  
+  /* Health Card Styles */
+  .health-card {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    max-width: 400px;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .health-card h3 {
+    margin-top: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 0.5rem;
+  }
+  
+  .health-card-info {
+    margin: 1rem 0;
+  }
+  
+  .health-card-info p {
+    margin: 0.5rem 0;
+  }
+  
+  .health-card-qr {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  
+  /* Medical record styles */
+  .medical-records-list {
+    margin-top: 2rem;
+  }
+  
+  .record-item {
+    border-left: 4px solid var(--primary-color);
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+  }
+  
+  .record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .record-title {
+    font-weight: 500;
+    color: var(--primary-color);
+  }
+  
+  .record-status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    background-color: var(--accent-color);
+    color: white;
+    font-size: 0.75rem;
+  }
+  
+  .record-details {
+    margin-bottom: 1rem;
+  }
+  
+  .record-visits {
+    margin-top: 1rem;
+  }
+  
+  .visit-item {
+    padding: 1rem;
+    background-color: var(--light-bg);
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .visit-header {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .visit-date {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .dashboard {
+      grid-template-columns: 1fr;
+    }
+    
+    .sidebar {
+      display: none;
+    }
+    
+    .mobile-menu {
+      display: block;
+    }
+  }

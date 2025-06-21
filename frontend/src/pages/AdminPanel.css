@@ -1,0 +1,531 @@
+/* AdminPanel.css - Comprehensive Styling */
+
+/* Base Admin Panel Container */
+.admin-panel {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Admin Container */
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    min-height: calc(100vh - 140px);
+    /* Account for navbar and footer */
+}
+
+/* Admin Header */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.admin-header h1 {
+    color: #1e293b;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.admin-user {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+.admin-user strong {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.logout-btn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+}
+
+.logout-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* Admin Tabs */
+.admin-tabs {
+    display: flex;
+    background: white;
+    border-radius: 12px;
+    padding: 0.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    gap: 0.5rem;
+    overflow-x: auto;
+}
+
+.tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 0.875rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    position: relative;
+}
+
+.tab-btn:hover {
+    background: #f8fafc;
+    color: #1e293b;
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Error Message */
+.error-message {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    color: #dc2626;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border: 1px solid #fecaca;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.error-message::before {
+    content: "⚠️";
+    font-size: 1.1rem;
+}
+
+/* Loading State */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem;
+    font-size: 1.1rem;
+    color: #64748b;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.loading::after {
+    content: "";
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e2e8f0;
+    border-top: 2px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 0.5rem;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Admin Content */
+.admin-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Doctors List */
+.doctors-list {
+    padding: 2rem;
+}
+
+.doctors-list h2 {
+    color: #1e293b;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.doctors-list p {
+    color: #64748b;
+    font-size: 1rem;
+    text-align: center;
+    padding: 2rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 2px dashed #cbd5e1;
+}
+
+/* Admin Table */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.admin-table thead {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.admin-table th {
+    padding: 1rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.admin-table td {
+    padding: 1rem 0.75rem;
+    border-bottom: 1px solid #f3f4f6;
+    color: #374151;
+    font-size: 0.9rem;
+}
+
+.admin-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.admin-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.admin-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Table Links */
+.admin-table a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.admin-table a:hover {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.approve-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.approve-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+.reject-btn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+}
+
+.reject-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+}
+
+/* System Logs */
+.system-logs {
+    padding: 2rem;
+}
+
+.system-logs h2 {
+    color: #1e293b;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.log-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.log-level-filter,
+.log-date-filter {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: white;
+    color: #374151;
+    transition: border-color 0.2s ease;
+}
+
+.log-level-filter:focus,
+.log-date-filter:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.filter-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+}
+
+.filter-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.logs-container {
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    padding: 3rem;
+    text-align: center;
+}
+
+.placeholder-text {
+    color: #64748b;
+    font-size: 1rem;
+    margin: 0;
+    font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .admin-container {
+        padding: 1rem 0.5rem;
+    }
+
+    .admin-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .admin-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .admin-tabs {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .tab-btn {
+        text-align: center;
+    }
+
+    .admin-table {
+        font-size: 0.8rem;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 0.5rem;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .approve-btn,
+    .reject-btn {
+        width: 100%;
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    .log-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .log-level-filter,
+    .log-date-filter,
+    .filter-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .admin-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .doctors-list {
+        padding: 1rem;
+    }
+
+    .system-logs {
+        padding: 1rem;
+    }
+}
+
+/* Enhanced Visual Effects */
+.admin-content {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Table Enhancements */
+.admin-table tbody tr {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Button Focus States */
+.tab-btn:focus,
+.approve-btn:focus,
+.reject-btn:focus,
+.logout-btn:focus,
+.filter-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+/* Status Indicators */
+.status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+.status-indicator.pending {
+    background: #f59e0b;
+}
+
+.status-indicator.approved {
+    background: #10b981;
+}
+
+.status-indicator.rejected {
+    background: #ef4444;
+}
+
+/* Loading Animation for buttons */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.btn-loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    transform: translate(-50%, -50%);
+}
