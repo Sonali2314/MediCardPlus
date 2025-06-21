@@ -1,0 +1,34 @@
+/backend
+    /config
+      db.js        # Database connection configuration
+      passport.js  # Authentication configuration
+    /controllers
+      authController.js
+      patientController.js
+      doctorController.js
+      recordController.js
+      adminController.js
+    /middlewares
+      auth.js      # Authentication middleware
+      rbac.js      # Role-based access control
+    /models
+      User.js
+      Patient.js
+      Doctor.js
+      MedicalRecord.js
+      Allergy.js
+      Prescription.js
+      Report.js
+      Visit.js
+    /routes
+      authRoutes.js
+      patientRoutes.js
+      doctorRoutes.js
+      recordRoutes.js
+      adminRoutes.js
+    /utils
+      generateCard.js  # Digital health card generator
+      validator.js     # Input validation functions
+    .env              # Environment variables
+    package.json
+    server.js         # Main application entry point
