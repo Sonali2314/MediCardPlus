@@ -1,0 +1,125 @@
+.patient-dashboard {
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.pd-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.pd-profile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.pd-avatar {
+    width: 64px;
+    height: 64px;
+    background-color: #3498db;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.pd-info h1 {
+    margin: 0;
+    :root{
+      --pd-primary: #4f46e5;
+      --pd-accent: #60a5fa;
+      --pd-muted: #64748b;
+      --pd-bg: #f6f8ff;
+    }
+
+    .patient-dashboard {
+      padding: 28px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Top tabs area */
+    .patient-dashboard .MuiTabs-root {
+      background: linear-gradient(90deg, rgba(79,70,229,0.06), rgba(96,165,250,0.03));
+      border-radius: 12px;
+      padding: 6px;
+      margin-bottom: 18px;
+    }
+
+    .patient-dashboard .MuiTab-root {
+      min-width: 120px;
+      text-transform: none;
+      font-weight: 600;
+      color: var(--pd-muted);
+    }
+
+    .patient-dashboard .MuiTab-root.Mui-selected {
+      color: var(--pd-primary);
+    }
+
+    /* Main paper/card styles */
+    .pd-card, .MuiPaper-root {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      padding: 20px;
+    }
+
+    .patient-profile-top {
+      display:flex;
+      gap:18px;
+      align-items:center;
+      margin-bottom:12px;
+    }
+
+    .patient-profile-top .MuiAvatar-root{
+      width:96px;
+      height:96px;
+      box-shadow: 0 6px 18px rgba(79,70,229,0.12);
+      background: linear-gradient(135deg,var(--pd-primary), var(--pd-accent));
+      color: #fff;
+      font-weight:700;
+    }
+
+    .patient-profile-top h6{ margin:0; font-size:1.1rem; }
+    .patient-profile-top .id { color:var(--pd-muted); font-size:0.9rem }
+
+    .patient-details-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap:18px; }
+    .patient-details-grid .field{ background: #fbfbff; padding:12px; border-radius:8px }
+    .patient-details-grid .label{ font-size:12px; color:var(--pd-muted); text-transform:uppercase; letter-spacing:0.6px }
+    .patient-details-grid .value{ font-weight:600; color:#0f172a }
+
+    /* Tables and report lists */
+    .pd-table { border-radius:10px; overflow:hidden }
+    .pd-table table{ width:100%; border-collapse:collapse }
+    .pd-table th{ background:#f3f6ff; color:var(--pd-muted); padding:10px 12px; text-align:left }
+    .pd-table td{ padding:12px; border-bottom:1px solid #f1f5f9 }
+    .pd-empty-state{ padding:18px; border-radius:8px; background:#fbfbff; color:var(--pd-muted) }
+
+    /* Emergency card */
+    .patient-emergency-card{ width:360px; padding:22px; border-radius:14px; background: linear-gradient(135deg,#fff,#f3f7ff); box-shadow: 0 12px 34px rgba(79,70,229,0.08) }
+    .patient-emergency-card .card-brand{ color:var(--pd-primary); font-weight:700 }
+
+    /* Buttons */
+    .pd-action { background: var(--pd-primary); color: #fff; border-radius:10px; padding:10px 14px; box-shadow: 0 6px 18px rgba(79,70,229,0.12); border:none }
+    .pd-action.secondary{ background:#eef2ff; color:var(--pd-primary) }
+
+    @media (max-width: 900px){
+      .patient-details-grid{ grid-template-columns: 1fr }
+      .patient-emergency-card{ width:100% }
+    }
+    .patient-emergency-card .card-info {
+        text-align: center;
+    }
+
+    .patient-emergency-card .card-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

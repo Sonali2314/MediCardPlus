@@ -1,0 +1,4 @@
+/* SignupPage.css — reuses LoginPage styles; add small overrides if needed */
+@import './LoginPage.css';
+
+/* No additional styles for now; page reuses existing classes from LoginPage.css */

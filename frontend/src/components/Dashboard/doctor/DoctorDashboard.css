@@ -1,0 +1,117 @@
+.doctor-dashboard {
+  padding: 24px;
+  max-width: 980px;
+  margin: 0 auto;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+.dd-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.dd-search {
+  flex: 1 1 480px;
+}
+
+.dd-search input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.dd-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  padding: 12px 14px;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.dd-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#6ee7b7,#3b82f6);
+  display: grid;
+  place-items: center;
+  color: white;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.dd-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.dd-name {
+  font-weight: 700;
+  margin: 0;
+}
+
+.dd-specialty {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.dd-actions {
+  margin-left: auto;
+}
+
+.dd-actions button {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.dd-results {
+  margin-top: 20px;
+}
+
+.dd-card {
+  background: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e6e9ef;
+  margin-bottom: 10px;
+}
+
+.dd-muted {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.dd-schedule-list,
+.dd-tasks-list {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.dd-schedule-list::-webkit-scrollbar,
+.dd-tasks-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dd-schedule-list::-webkit-scrollbar-thumb,
+.dd-tasks-list::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.5);
+  border-radius: 4px;
+}
+
+.dd-patient-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}

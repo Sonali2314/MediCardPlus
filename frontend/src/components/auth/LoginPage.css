@@ -1,0 +1,293 @@
+/* LoginPage.css - Teal & White (Modern Medical) Theme */
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --color-primary: #0D9488; /* Teal */
+  --color-secondary: #14B8A6; /* Light Teal */
+  --color-bg: #F0FDFA; /* Background */
+  --color-surface: #FFFFFF; /* Cards / surfaces */
+  --text-primary: #0f172a; /* dark slate for readable text */
+  --text-secondary: #475569; /* muted text */
+  --muted-border: rgba(15,23,42,0.06);
+  --shadow-soft: rgba(13,148,136,0.08);
+  --shadow-strong: rgba(15,23,42,0.06);
+}
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  padding: 20px;
+}
+
+.login-container {
+  /* allow absolutely positioned background slogan */
+  position: relative;
+  overflow: hidden;
+}
+
+.login-box {
+  background: var(--color-surface);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px var(--shadow-soft);
+  padding: 40px;
+  width: 100%;
+  max-width: 480px;
+}
+
+.login-box {
+  position: relative;
+  z-index: 1; /* put card above the background slogan */
+}
+
+/* Left-side background slogan (single-sided) */
+.login-container::before {
+  position: absolute;
+  top: 22%;
+  left: 10%;
+  font-weight: 700;
+  font-family: inherit;
+  font-size: clamp(36px, 7.5vw, 110px);
+  color: rgba(13,148,136,0.18); /* slightly darker teal-tinted text */
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: 0.12em;
+  z-index: 0;
+  /* two-line slogan: "YOUR  HEALTH" on first line, "IN  YOUR  POCKET" on second */
+  /* five-line slogan: YOUR / HEALTH / IN / YOUR / POCKET */
+  content: "YOUR\A HEALTH\A IN\A YOUR\A POCKET";
+  white-space: pre-line;
+  line-height: 0.95;
+  transform: rotate(0deg);
+  text-align: left;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-header h1 {
+  font-size: 28px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.login-header p {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* User Type Section */
+.user-type-section {
+  margin-bottom: 25px;
+}
+
+.user-type-section label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.user-type-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.user-btn {
+  padding: 14px 10px;
+  border: 2px solid var(--muted-border);
+  background: var(--color-surface);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: all 0.18s ease;
+}
+
+.user-btn:hover {
+  border-color: var(--color-primary);
+  background: rgba(20,184,166,0.06);
+  color: var(--color-primary);
+}
+
+.user-btn.active {
+  border-color: var(--color-primary);
+  background: rgba(20,184,166,0.12);
+  color: var(--color-primary);
+}
+
+/* Form Section */
+.form-section {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid var(--muted-border);
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.18s ease;
+  color: var(--text-primary);
+  background: #fff;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 6px 20px rgba(13,148,136,0.06);
+}
+
+.form-group input.input-error {
+  border-color: #e74c3c;
+}
+
+.error-text {
+  display: block;
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* Form Options */
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.remember-me input {
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.forgot-password {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+
+.forgot-password:hover {
+  color: var(--color-secondary);
+}
+
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.submit-btn:hover {
+  background: var(--color-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(20,184,166,0.16);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+.submit-btn:disabled {
+  background: #e6eef0;
+  color: #9aa4a6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Signup Section */
+.signup-section {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.signup-section p {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.signup-link {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+
+.signup-link:hover {
+  color: var(--color-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 500px) {
+  .login-box {
+    padding: 30px 20px;
+  }
+  
+  .user-type-buttons {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* hide slogan on smaller screens */
+@media (max-width: 800px) {
+  .login-container::before {
+    display: none;
+  }
+}
+
+/* On very wide screens increase size and move slightly left */
+@media (min-width: 1200px) {
+  .login-container::before {
+    font-size: clamp(56px, 6.5vw, 140px);
+    color: rgba(13,148,136,0.22);
+    top: 20%;
+    left: 6%;
+  }
+}
