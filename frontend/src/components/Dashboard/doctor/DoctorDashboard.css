@@ -1,98 +1,283 @@
-.doctor-dashboard {
-  padding: 24px;
-  max-width: 980px;
-  margin: 0 auto;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+/* =============================================
+   MEDICARD DESIGN SYSTEM — DoctorDashboard
+   ============================================= */
+
+:root {
+  --color-primary: #2563EB;
+  --color-primary-hover: #1D4ED8;
+  --color-primary-light: #EFF6FF;
+  --color-green: #16A34A;
+  --color-green-hover: #15803D;
+  --color-green-light: #F0FDF4;
+  --color-bg: #F9FAFB;
+  --color-white: #FFFFFF;
+  --color-border: #E5E7EB;
+  --color-text: #111827;
+  --color-text-secondary: #4B5563;
+  --color-text-muted: #9CA3AF;
+  --color-shadow: rgba(0, 0, 0, 0.06);
+  --radius-card: 12px;
+  --radius-btn: 8px;
 }
 
+/* ---- Page Shell ---- */
+.dd-page {
+  min-height: 100vh;
+  background-color: var(--color-bg);
+}
+
+/* ---- Header ---- */
 .dd-header {
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px var(--color-shadow);
+  padding: 16px 32px;
+}
+
+.dd-header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 18px;
 }
 
-.dd-search {
-  flex: 1 1 480px;
-}
-
-.dd-search input {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  font-size: 14px;
-}
-
-.dd-profile {
+.dd-brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #fff;
-  padding: 12px 14px;
-  border-radius: 10px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.dd-brand-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.dd-brand-name {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: var(--color-text) !important;
+  line-height: 1.2 !important;
+}
+
+.dd-brand-sub {
+  font-size: 12px !important;
+  color: var(--color-text-muted) !important;
+}
+
+.dd-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dd-doctor-name {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: var(--color-text) !important;
+  text-align: right;
+}
+
+.dd-doctor-spec {
+  font-size: 12px !important;
+  color: var(--color-text-muted) !important;
+  text-align: right;
+}
+
+/* ---- Main content wrapper ---- */
+.dd-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* ---- Doctor Info Card ---- */
+.dd-info-card {
+  background: var(--color-white) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: 0 1px 3px var(--color-shadow) !important;
+  padding: 24px !important;
+  margin-bottom: 24px !important;
+}
+
+.dd-info-card-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
 }
 
 .dd-avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: linear-gradient(135deg,#6ee7b7,#3b82f6);
-  display: grid;
-  place-items: center;
-  color: white;
-  font-weight: 700;
-  font-size: 20px;
+  width: 64px !important;
+  height: 64px !important;
+  background: #DCFCE7 !important;
+  color: var(--color-green) !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  flex-shrink: 0;
 }
 
-.dd-info {
+.dd-doctor-info-name {
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  color: var(--color-text) !important;
+  margin-bottom: 4px !important;
+}
+
+.dd-doctor-meta {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
 }
 
-.dd-name {
-  font-weight: 700;
-  margin: 0;
+/* ---- Stats Grid ---- */
+.dd-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
 }
 
-.dd-specialty {
-  margin: 0;
-  font-size: 13px;
-  color: #6b7280;
+.dd-stat-card {
+  background: var(--color-white) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: 0 1px 3px var(--color-shadow) !important;
+  padding: 24px !important;
 }
 
-.dd-actions {
-  margin-left: auto;
+.dd-stat-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
-.dd-actions button {
-  background: #3b82f6;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
+.dd-stat-icon {
+  width: 48px;
+  height: 48px;
   border-radius: 8px;
-  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.dd-results {
-  margin-top: 20px;
+.dd-stat-icon.blue   { background: #DBEAFE; }
+.dd-stat-icon.green  { background: #DCFCE7; }
+.dd-stat-icon.orange { background: #FFEDD5; }
+
+.dd-stat-value {
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  color: var(--color-text) !important;
+  line-height: 1.1 !important;
+  margin-bottom: 2px !important;
 }
 
+.dd-stat-label {
+  font-size: 13px !important;
+  color: var(--color-text-secondary) !important;
+}
+
+/* ---- Generic card ---- */
 .dd-card {
-  background: #fff;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #e6e9ef;
-  margin-bottom: 10px;
+  background: var(--color-white) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: 0 1px 3px var(--color-shadow) !important;
+  padding: 24px !important;
+  height: 100%;
 }
 
-.dd-muted {
-  color: #6b7280;
-  font-size: 13px;
+.dd-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
 }
 
+.dd-card-title {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: var(--color-text) !important;
+}
+
+/* ---- Patients section ---- */
+.dd-patients-card {
+  background: var(--color-white) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: 0 1px 3px var(--color-shadow) !important;
+  padding: 24px !important;
+  margin-bottom: 24px !important;
+}
+
+.dd-patients-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.dd-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.dd-search-wrap .MuiTextField-root .MuiOutlinedInput-root {
+  border-radius: 8px !important;
+  font-size: 14px !important;
+}
+
+.dd-search-wrap .MuiTextField-root .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-green) !important;
+}
+
+.dd-search-wrap .MuiTextField-root .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-green) !important;
+}
+
+/* ---- Table styles ---- */
+.dd-table-wrap .MuiTableHead-root .MuiTableCell-root {
+  background: #F3F6FF !important;
+  color: var(--color-text-secondary) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 10px 16px !important;
+  border-bottom: 1px solid var(--color-border) !important;
+}
+
+.dd-table-wrap .MuiTableBody-root .MuiTableCell-root {
+  font-size: 14px !important;
+  color: var(--color-text) !important;
+  padding: 12px 16px !important;
+  border-bottom: 1px solid #F1F5F9 !important;
+}
+
+.dd-table-wrap .MuiTableBody-root .MuiTableRow-root:last-child .MuiTableCell-root {
+  border-bottom: none !important;
+}
+
+.dd-table-wrap .MuiTableBody-root .MuiTableRow-root:hover {
+  background: #FAFBFF !important;
+}
+
+.dd-empty-row td {
+  text-align: center !important;
+  color: var(--color-text-muted) !important;
+  font-size: 14px !important;
+  padding: 24px !important;
+}
+
+/* ---- Schedule & Tasks list ---- */
 .dd-schedule-list,
 .dd-tasks-list {
   max-height: 320px;
@@ -106,12 +291,100 @@
 
 .dd-schedule-list::-webkit-scrollbar-thumb,
 .dd-tasks-list::-webkit-scrollbar-thumb {
-  background-color: rgba(148, 163, 184, 0.5);
+  background-color: rgba(148, 163, 184, 0.4);
   border-radius: 4px;
 }
 
-.dd-patient-dialog {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+/* ---- List item avatar colors ---- */
+.dd-list-avatar-green {
+  background-color: var(--color-green) !important;
+}
+
+.dd-list-avatar-blue {
+  background-color: var(--color-primary) !important;
+}
+
+/* ---- Buttons ---- */
+.dd-btn-primary {
+  background: var(--color-green) !important;
+  color: white !important;
+  padding: 8px 16px !important;
+  border-radius: var(--radius-btn) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  box-shadow: none !important;
+}
+
+.dd-btn-primary:hover {
+  background: var(--color-green-hover) !important;
+}
+
+.dd-btn-primary:disabled {
+  background: #86EFAC !important;
+}
+
+.dd-btn-outline {
+  border: 1px solid var(--color-green) !important;
+  color: var(--color-green) !important;
+  padding: 4px 12px !important;
+  border-radius: var(--radius-btn) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.dd-btn-outline:hover {
+  background: var(--color-green-light) !important;
+}
+
+.dd-btn-outline-blue {
+  border: 1px solid var(--color-primary) !important;
+  color: var(--color-primary) !important;
+  padding: 4px 12px !important;
+  border-radius: var(--radius-btn) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.dd-btn-outline-blue:hover {
+  background: var(--color-primary-light) !important;
+}
+
+/* ---- Dialog ---- */
+.dd-dialog-title {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: var(--color-text) !important;
+}
+
+.dd-patient-name-dialog {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: var(--color-text) !important;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .dd-header {
+    padding: 12px 16px;
+  }
+
+  .dd-content {
+    padding: 20px 16px;
+  }
+
+  .dd-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dd-patients-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

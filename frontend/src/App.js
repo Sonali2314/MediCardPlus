@@ -38,6 +38,9 @@ function AppRoutes({ currentUser, setCurrentUser }) {
         case 'patient':
           v = 'patient';
           break;
+        default:
+          v = '/';
+          break;
       }
     }
     const path = mapViewToPath(v);

@@ -351,9 +351,9 @@ function HomePage({ onNavigate }) {
           <div className="footer-social">
             <h4>Connect</h4>
             <div className="social-icons">
-              <a href="#" aria-label="Twitter"><i className="fab fa-twitter"></i></a>
-              <a href="#" aria-label="LinkedIn"><i className="fab fa-linkedin"></i></a>
-              <a href="#" aria-label="GitHub"><i className="fab fa-github"></i></a>
+              <a href="https://twitter.com" aria-label="Twitter" target="_blank" rel="noreferrer"><i className="fab fa-twitter"></i></a>
+              <a href="https://www.linkedin.com" aria-label="LinkedIn" target="_blank" rel="noreferrer"><i className="fab fa-linkedin"></i></a>
+              <a href="https://github.com" aria-label="GitHub" target="_blank" rel="noreferrer"><i className="fab fa-github"></i></a>
             </div>
           </div>
         </div>

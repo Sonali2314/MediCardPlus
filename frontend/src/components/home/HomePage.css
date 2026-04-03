@@ -147,7 +147,7 @@ nav .nav-btn.primary:hover {
   display: flex;
   align-items: center;
   gap: 40px;
-  padding: 60px 40px;
+  padding: 10px 5px;
   max-width: 1200px;
   margin: 0 auto;
 }

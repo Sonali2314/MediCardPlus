@@ -210,55 +210,76 @@ const DoctorManagement = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-        <Typography variant="h5" component="h2">
-          Doctor Management
-        </Typography>
+    <Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <div>
+          <Typography sx={{ fontSize: 18, fontWeight: 600, color: 'var(--color-text)' }}>
+            Doctor Management
+          </Typography>
+          <Typography sx={{ fontSize: 13, color: 'var(--color-text-muted)', mt: 0.5 }}>
+            Manage doctors assigned to your hospital
+          </Typography>
+        </div>
         <Button
           variant="contained"
-          color="primary"
           onClick={handleOpenDialog}
+          sx={{
+            background: 'var(--color-primary)', color: 'white', borderRadius: '8px',
+            fontSize: 14, fontWeight: 500, textTransform: 'none', boxShadow: 'none',
+            padding: '8px 16px',
+            '&:hover': { background: 'var(--color-primary-hover)', boxShadow: 'none' }
+          }}
         >
-          Add New Doctor
+          + Add New Doctor
         </Button>
       </Box>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+      {error && <Alert severity="error" sx={{ mb: 2, borderRadius: '8px' }}>{error}</Alert>}
+      {success && <Alert severity="success" sx={{ mb: 2, borderRadius: '8px' }}>{success}</Alert>}
 
-      <TableContainer component={Paper}>
+      <TableContainer className="hd-table-wrap" component={Paper} elevation={0}
+        sx={{ border: '1px solid var(--color-border)', borderRadius: '10px', overflow: 'hidden' }}>
         <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Specialization</TableCell>
-                <TableCell>Department</TableCell>
-                <TableCell>Phone Number</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Specialization</TableCell>
+              <TableCell>Department</TableCell>
+              <TableCell>Phone Number</TableCell>
+              <TableCell align="right">Actions</TableCell>
+            </TableRow>
+          </TableHead>
           <TableBody>
+            {doctors.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={6} align="center"
+                  sx={{ py: 3, color: 'var(--color-text-muted)', fontSize: 14 }}>
+                  No doctors added yet.
+                </TableCell>
+              </TableRow>
+            )}
             {doctors.map((doctor) => (
               <TableRow key={doctor._id}>
-                <TableCell>{doctor.fullName}</TableCell>
+                <TableCell sx={{ fontWeight: 500 }}>{doctor.fullName}</TableCell>
                 <TableCell>{doctor.email}</TableCell>
                 <TableCell>{doctor.specialization}</TableCell>
                 <TableCell>{doctor.department || 'Not assigned'}</TableCell>
                 <TableCell>{doctor.phoneNumber}</TableCell>
-                <TableCell>
+                <TableCell align="right">
                   <IconButton
-                    color="primary"
+                    size="small"
                     onClick={() => handleEditDoctor(doctor)}
+                    sx={{ color: 'var(--color-primary)', '&:hover': { background: 'var(--color-primary-light)' }, mr: 0.5 }}
                   >
-                    <EditIcon />
+                    <EditIcon fontSize="small" />
                   </IconButton>
                   <IconButton
-                    color="error"
+                    size="small"
                     onClick={() => handleDeleteDoctor(doctor._id)}
+                    sx={{ color: '#EF4444', '&:hover': { background: '#FEF2F2' } }}
                   >
-                    <DeleteIcon />
+                    <DeleteIcon fontSize="small" />
                   </IconButton>
                 </TableCell>
               </TableRow>

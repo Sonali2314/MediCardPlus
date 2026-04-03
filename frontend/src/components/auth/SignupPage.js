@@ -8,7 +8,6 @@ function SignupPage({ onNavigate }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
-  const [extra, setExtra] = useState('');
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -107,6 +106,9 @@ function SignupPage({ onNavigate }) {
     <div className="login-container">
       <div className="login-box">
         <div className="login-header">
+          <button className="back-btn" onClick={() => onNavigate && onNavigate('home')}>
+            <i className="fas fa-arrow-left"></i> Back to Home
+          </button>
           <h1>Create Account</h1>
           <p>Register a new account</p>
         </div>

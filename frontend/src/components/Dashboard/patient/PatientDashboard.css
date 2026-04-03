@@ -1,125 +1,504 @@
-.patient-dashboard {
-    padding: 24px;
-    max-width: 1200px;
-    margin: 0 auto;
+/* =============================================
+   MEDICARD DESIGN SYSTEM — PatientDashboard
+   ============================================= */
+
+:root {
+  --color-primary: #2563EB;
+  --color-primary-hover: #1D4ED8;
+  --color-primary-light: #EFF6FF;
+  --color-green: #16A34A;
+  --color-green-hover: #15803D;
+  --color-green-light: #F0FDF4;
+  --color-bg: #F9FAFB;
+  --color-white: #FFFFFF;
+  --color-border: #E5E7EB;
+  --color-text: #111827;
+  --color-text-secondary: #4B5563;
+  --color-text-muted: #9CA3AF;
+  --color-shadow: rgba(0, 0, 0, 0.06);
+  --radius-card: 12px;
+  --radius-btn: 8px;
 }
 
+/* ---- Page Shell ---- */
+.pd-page {
+  min-height: 100vh;
+  background-color: var(--color-bg);
+}
+
+/* ---- Header ---- */
 .pd-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 32px;
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px var(--color-shadow);
+  padding: 16px 32px;
 }
 
-.pd-profile {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+.pd-header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.pd-avatar {
-    width: 64px;
-    height: 64px;
-    background-color: #3498db;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    font-weight: bold;
+.pd-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.pd-info h1 {
-    margin: 0;
-    :root{
-      --pd-primary: #4f46e5;
-      --pd-accent: #60a5fa;
-      --pd-muted: #64748b;
-      --pd-bg: #f6f8ff;
-    }
+.pd-brand-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
 
-    .patient-dashboard {
-      padding: 28px 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+.pd-brand-name {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: var(--color-text) !important;
+  line-height: 1.2 !important;
+}
 
-    /* Top tabs area */
-    .patient-dashboard .MuiTabs-root {
-      background: linear-gradient(90deg, rgba(79,70,229,0.06), rgba(96,165,250,0.03));
-      border-radius: 12px;
-      padding: 6px;
-      margin-bottom: 18px;
-    }
+.pd-brand-sub {
+  font-size: 12px !important;
+  color: var(--color-text-muted) !important;
+}
 
-    .patient-dashboard .MuiTab-root {
-      min-width: 120px;
-      text-transform: none;
-      font-weight: 600;
-      color: var(--pd-muted);
-    }
+.pd-logout-btn {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 16px !important;
+  border-radius: var(--radius-btn) !important;
+  color: #374151 !important;
+  font-size: 14px !important;
+  text-transform: none !important;
+  border: none !important;
+  background: transparent !important;
+  cursor: pointer;
+  transition: background 0.15s;
+}
 
-    .patient-dashboard .MuiTab-root.Mui-selected {
-      color: var(--pd-primary);
-    }
+.pd-logout-btn:hover {
+  background: #F3F4F6 !important;
+}
 
-    /* Main paper/card styles */
-    .pd-card, .MuiPaper-root {
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-      padding: 20px;
-    }
+/* ---- Main content wrapper ---- */
+.pd-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
 
-    .patient-profile-top {
-      display:flex;
-      gap:18px;
-      align-items:center;
-      margin-bottom:12px;
-    }
+/* ---- Patient Info Card (top) ---- */
+.pd-info-card {
+  background: var(--color-white) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: 0 1px 3px var(--color-shadow) !important;
+  padding: 24px !important;
+  margin-bottom: 24px !important;
+}
 
-    .patient-profile-top .MuiAvatar-root{
-      width:96px;
-      height:96px;
-      box-shadow: 0 6px 18px rgba(79,70,229,0.12);
-      background: linear-gradient(135deg,var(--pd-primary), var(--pd-accent));
-      color: #fff;
-      font-weight:700;
-    }
+.pd-info-card-inner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
 
-    .patient-profile-top h6{ margin:0; font-size:1.1rem; }
-    .patient-profile-top .id { color:var(--pd-muted); font-size:0.9rem }
+.pd-info-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
 
-    .patient-details-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap:18px; }
-    .patient-details-grid .field{ background: #fbfbff; padding:12px; border-radius:8px }
-    .patient-details-grid .label{ font-size:12px; color:var(--pd-muted); text-transform:uppercase; letter-spacing:0.6px }
-    .patient-details-grid .value{ font-weight:600; color:#0f172a }
+.pd-avatar-wrap {
+  width: 64px !important;
+  height: 64px !important;
+  border-radius: 50% !important;
+  background: #DBEAFE !important;
+  color: var(--color-primary) !important;
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  flex-shrink: 0;
+}
 
-    /* Tables and report lists */
-    .pd-table { border-radius:10px; overflow:hidden }
-    .pd-table table{ width:100%; border-collapse:collapse }
-    .pd-table th{ background:#f3f6ff; color:var(--pd-muted); padding:10px 12px; text-align:left }
-    .pd-table td{ padding:12px; border-bottom:1px solid #f1f5f9 }
-    .pd-empty-state{ padding:18px; border-radius:8px; background:#fbfbff; color:var(--pd-muted) }
+.pd-patient-name {
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  color: var(--color-text) !important;
+  margin-bottom: 4px !important;
+}
 
-    /* Emergency card */
-    .patient-emergency-card{ width:360px; padding:22px; border-radius:14px; background: linear-gradient(135deg,#fff,#f3f7ff); box-shadow: 0 12px 34px rgba(79,70,229,0.08) }
-    .patient-emergency-card .card-brand{ color:var(--pd-primary); font-weight:700 }
+.pd-patient-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
 
-    /* Buttons */
-    .pd-action { background: var(--pd-primary); color: #fff; border-radius:10px; padding:10px 14px; box-shadow: 0 6px 18px rgba(79,70,229,0.12); border:none }
-    .pd-action.secondary{ background:#eef2ff; color:var(--pd-primary) }
+/* ---- Tab Navigation ---- */
+.pd-tabs-card {
+  background: var(--color-white) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: 0 1px 3px var(--color-shadow) !important;
+  margin-bottom: 24px !important;
+  overflow: hidden !important;
+}
 
-    @media (max-width: 900px){
-      .patient-details-grid{ grid-template-columns: 1fr }
-      .patient-emergency-card{ width:100% }
-    }
-    .patient-emergency-card .card-info {
-        text-align: center;
-    }
+.pd-tabs-card .MuiTabs-root {
+  padding: 0 24px !important;
+  min-height: unset !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  background: transparent !important;
+}
 
-    .patient-emergency-card .card-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+.pd-tabs-card .MuiTab-root {
+  min-height: 56px !important;
+  padding: 16px 16px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  color: #6B7280 !important;
+  gap: 8px !important;
+  min-width: auto !important;
+}
+
+.pd-tabs-card .MuiTab-root:hover {
+  color: #374151 !important;
+}
+
+.pd-tabs-card .MuiTab-root.Mui-selected {
+  color: var(--color-primary) !important;
+}
+
+.pd-tabs-card .MuiTabs-indicator {
+  background-color: var(--color-primary) !important;
+  height: 2px !important;
+}
+
+.pd-tabs-card .MuiTab-iconWrapper {
+  margin-right: 6px !important;
+  font-size: 18px !important;
+}
+
+/* ---- Generic Section Card ---- */
+.pd-card {
+  background: var(--color-white) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: 0 1px 3px var(--color-shadow) !important;
+  padding: 24px !important;
+}
+
+.pd-card-title {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: var(--color-text) !important;
+  margin-bottom: 4px !important;
+}
+
+.pd-card-sub {
+  font-size: 14px !important;
+  color: var(--color-text-secondary) !important;
+  margin-bottom: 0 !important;
+}
+
+.pd-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+/* ---- Profile details grid ---- */
+.pd-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.pd-field {
+  background: #FBFBFF;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.pd-field-label {
+  font-size: 11px !important;
+  color: var(--color-text-muted) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 4px !important;
+  display: block;
+}
+
+.pd-field-value {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #0F172A !important;
+  word-break: break-word;
+}
+
+.pd-field-value.blood {
+  color: #DC2626 !important;
+}
+
+.pd-field-full {
+  grid-column: 1 / -1;
+}
+
+/* ---- Primary Button ---- */
+.pd-btn-primary {
+  background: var(--color-primary) !important;
+  color: white !important;
+  padding: 8px 16px !important;
+  border-radius: var(--radius-btn) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  box-shadow: none !important;
+  transition: background 0.15s !important;
+}
+
+.pd-btn-primary:hover {
+  background: var(--color-primary-hover) !important;
+}
+
+.pd-btn-primary:disabled {
+  background: #93C5FD !important;
+}
+
+.pd-btn-outline {
+  border: 1px solid var(--color-primary) !important;
+  color: var(--color-primary) !important;
+  padding: 8px 16px !important;
+  border-radius: var(--radius-btn) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transition: background 0.15s !important;
+}
+
+.pd-btn-outline:hover {
+  background: var(--color-primary-light) !important;
+}
+
+/* ---- Table styles ---- */
+.pd-table-wrap {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.pd-table-wrap .MuiTableHead-root .MuiTableCell-root {
+  background: #F3F6FF !important;
+  color: var(--color-text-secondary) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 10px 16px !important;
+  border-bottom: 1px solid var(--color-border) !important;
+}
+
+.pd-table-wrap .MuiTableBody-root .MuiTableCell-root {
+  font-size: 14px !important;
+  color: var(--color-text) !important;
+  padding: 12px 16px !important;
+  border-bottom: 1px solid #F1F5F9 !important;
+}
+
+.pd-table-wrap .MuiTableBody-root .MuiTableRow-root:last-child .MuiTableCell-root {
+  border-bottom: none !important;
+}
+
+.pd-table-wrap .MuiTableBody-root .MuiTableRow-root:hover {
+  background: #FAFBFF !important;
+}
+
+.pd-empty-row td {
+  text-align: center !important;
+  color: var(--color-text-muted) !important;
+  font-size: 14px !important;
+  padding: 24px !important;
+}
+
+/* ---- Badges / Status pills ---- */
+.pd-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.pd-badge-green  { background: #DCFCE7; color: #15803D; }
+.pd-badge-yellow { background: #FEF9C3; color: #A16207; }
+.pd-badge-blue   { background: #DBEAFE; color: #1D4ED8; }
+.pd-badge-purple { background: #F3E8FF; color: #7E22CE; }
+.pd-badge-red    { background: #FEE2E2; color: #DC2626; }
+
+/* ---- Document Upload section ---- */
+.pd-upload-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pd-upload-row input[type="file"] {
+  flex: 1;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  min-width: 0;
+}
+
+.pd-upload-hint {
+  font-size: 13px !important;
+  color: var(--color-text-muted) !important;
+  margin-top: 6px !important;
+}
+
+/* ---- Emergency card wrapper ---- */
+.patient-emergency-card-wrapper {
+  flex-shrink: 0;
+}
+
+/* ---- Alert overrides ---- */
+.pd-alert {
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  margin-bottom: 16px !important;
+}
+
+/* ---- Settings Form ---- */
+.pd-settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.pd-settings-title {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: var(--color-text) !important;
+}
+
+.pd-settings-btn-row {
+  display: flex;
+  gap: 8px;
+}
+
+/* MUI TextField overrides to match design */
+.pd-card .MuiTextField-root .MuiOutlinedInput-root {
+  border-radius: 8px !important;
+  font-size: 14px !important;
+}
+
+.pd-card .MuiTextField-root .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-primary) !important;
+}
+
+.pd-card .MuiTextField-root .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--color-primary) !important;
+  border-width: 2px !important;
+}
+
+.pd-card .MuiInputLabel-root.Mui-focused {
+  color: var(--color-primary) !important;
+}
+
+/* ---- History / Prescriptions panel ---- */
+.pd-history-entry {
+  border-left: 4px solid #22C55E;
+  padding-left: 16px;
+  margin-bottom: 24px;
+}
+
+.pd-history-entry:last-child {
+  margin-bottom: 0;
+}
+
+.pd-history-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.pd-history-diagnosis {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  color: var(--color-text) !important;
+  margin-bottom: 2px !important;
+}
+
+.pd-history-type {
+  font-size: 13px !important;
+  color: var(--color-text-secondary) !important;
+}
+
+.pd-history-date {
+  font-size: 13px !important;
+  color: var(--color-text-muted) !important;
+  white-space: nowrap;
+}
+
+.pd-history-notes {
+  font-size: 14px !important;
+  color: #374151 !important;
+  margin: 8px 0 12px !important;
+}
+
+.pd-vitals-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pd-vital-chip {
+  padding: 4px 12px;
+  background: #F3F4F6;
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--color-text);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .pd-header {
+    padding: 12px 16px;
+  }
+
+  .pd-content {
+    padding: 20px 16px;
+  }
+
+  .pd-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pd-info-card-inner {
+    flex-direction: column;
+  }
+
+  .patient-emergency-card-wrapper {
+    width: 100%;
+  }
+
+  .pd-tabs-card .MuiTab-root {
+    padding: 12px 10px !important;
+    font-size: 13px !important;
+  }
 }

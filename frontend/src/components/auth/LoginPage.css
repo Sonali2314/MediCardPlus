@@ -73,6 +73,31 @@
 .login-header {
   text-align: center;
   margin-bottom: 30px;
+  position: relative;
+}
+
+.back-btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.18s ease;
+}
+
+.back-btn:hover {
+  color: var(--color-secondary);
+}
+
+.back-btn i {
+  font-size: 12px;
 }
 
 .login-header h1 {

@@ -32,6 +32,9 @@ export async function createUser(userData) {
                     type: userData.type || 'private',
                 };
                 break;
+            default:
+                // Keep enrichedData as-is for unknown user types
+                break;
         }
 
         const response = await fetch(`${API_URL}/signup`, {
