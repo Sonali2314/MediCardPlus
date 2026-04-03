@@ -278,7 +278,7 @@ function PatientDashboard() {
           >
             <Tab value="profile"   label="Profile"          icon={<Person />}      iconPosition="start" />
             <Tab value="documents" label="Documents"        icon={<Description />} iconPosition="start" />
-            <Tab value="history"   label="History"          icon={<History />}     iconPosition="start" />
+            <Tab value="history"   label="Summary of Records"          icon={<History />}     iconPosition="start" />
             <Tab value="medicard"  label="Medicard"         icon={<FilePresent />} iconPosition="start" />
             <Tab value="settings"  label="Profile Settings" icon={<Person />}      iconPosition="start" />
           </Tabs>

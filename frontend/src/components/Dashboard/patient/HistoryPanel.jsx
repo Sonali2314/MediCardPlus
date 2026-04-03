@@ -9,13 +9,13 @@ export default function HistoryPanel({ prescriptions, medicalRecords, handleFile
   return (
     <Grid container spacing={3}>
 
-      {/* ---- Current Prescriptions ---- */}
-      <Grid item xs={12} md={6}>
+      {/* ---- Current Summary ---- */}
+      <Grid item xs={12}>
         <Paper className="pd-card" elevation={0}>
           <div className="pd-card-header">
             <div>
-              <Typography className="pd-card-title">Current Prescriptions</Typography>
-              <Typography className="pd-card-sub">Your active medications</Typography>
+              <Typography className="pd-card-title">Current Summary</Typography>
+              <Typography className="pd-card-sub">Your active medications and medical summary</Typography>
             </div>
           </div>
 

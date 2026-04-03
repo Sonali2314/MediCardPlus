@@ -50,6 +50,28 @@ const dashboardService = {
         return data;
     },
 
+    getMainInfo: async (token) => {
+        const response = await fetch(`${API_URL}/patient/main-info`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message);
+        return data;
+    },
+
+    getMainInfoLocation: async (token) => {
+        const response = await fetch(`${API_URL}/patient/main-info-location`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message);
+        return data;
+    },
+
     downloadReport: async (reportId, token) => {
         const response = await fetch(`${API_URL}/patient/download-report/${reportId}`, {
             headers: {

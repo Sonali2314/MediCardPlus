@@ -5,6 +5,8 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { extractInfoFromFile } from '../services/nlpExtractionService.js';
+import { updatePatientMainInfo, getPatientMainInfo } from '../services/patientDataService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -112,22 +114,59 @@ router.post('/upload-report', auth, checkRole(['patient']), upload.single('repor
             fileName: req.file.filename,
             originalName: req.file.originalname,
             filePath: req.file.path,
-            fileSize: req.file.size
+            fileSize: req.file.size,
+            uploadDate: new Date()
         };
 
+        // Extract file extension
+        const fileExtension = path.extname(req.file.originalname).substring(1).toLowerCase();
+
+        // Initialize main_info update response
+        let mainInfoUpdateResult = null;
+        let extractionError = null;
+
+        try {
+            // Extract medical information from file using NLP
+            console.log(`Extracting medical info from ${fileExtension} file...`);
+            const extractedData = await extractInfoFromFile(req.file.path, fileExtension);
+
+            // Update patient's main_info with extracted data
+            const uploadMetadata = {
+                fileName: reportData.fileName,
+                originalName: reportData.originalName,
+                uploadDate: reportData.uploadDate.toISOString()
+            };
+
+            mainInfoUpdateResult = updatePatientMainInfo(
+                req.user.id,
+                extractedData,
+                uploadMetadata,
+                patient
+            );
+
+            console.log(`Successfully extracted and updated main_info for patient ${req.user.id}`);
+        } catch (nlpError) {
+            console.error('NLP extraction error:', nlpError);
+            extractionError = nlpError.message;
+        }
+
+        // Save report to patient document
         patient.reports.push(reportData);
         await patient.save();
 
         res.json({
             ok: true,
             message: 'Report uploaded successfully',
-            report: reportData
+            report: reportData,
+            mainInfo: mainInfoUpdateResult,
+            extractionStatus: extractionError ? `Extraction completed with warning: ${extractionError}` : 'Extraction successful'
         });
     } catch (error) {
         console.error('Report upload error:', error);
         res.status(500).json({
             ok: false,
-            message: 'Error uploading report'
+            message: 'Error uploading report',
+            error: error.message
         });
     }
 });
@@ -188,6 +227,63 @@ router.get('/reports', auth, checkRole(['patient']), async (req, res) => {
         res.status(500).json({
             ok: false,
             message: 'Error fetching reports'
+        });
+    }
+});
+
+// Get patient's main_info (aggregated medical data for ML model)
+router.get('/main-info', auth, checkRole(['patient']), async (req, res) => {
+    try {
+        const mainInfo = getPatientMainInfo(req.user.id);
+
+        if (!mainInfo) {
+            return res.status(404).json({
+                ok: false,
+                message: 'Main info not found. Please upload medical reports first.'
+            });
+        }
+
+        res.json({
+            ok: true,
+            mainInfo: mainInfo,
+            filePath: path.join(__dirname, `../uploads/patient-data/${req.user.id}/main_info.json`)
+        });
+    } catch (error) {
+        console.error('Get main_info error:', error);
+        res.status(500).json({
+            ok: false,
+            message: 'Error fetching main information'
+        });
+    }
+});
+
+// View main_info file location and info
+router.get('/main-info-location', auth, checkRole(['patient']), async (req, res) => {
+    try {
+        const patientId = req.user.id;
+        const mainInfoPath = path.join(__dirname, `../uploads/patient-data/${patientId}/main_info.json`);
+        
+        let fileExists = false;
+        let fileContent = null;
+
+        if (fs.existsSync(mainInfoPath)) {
+            fileExists = true;
+            fileContent = JSON.parse(fs.readFileSync(mainInfoPath, 'utf-8'));
+        }
+
+        res.json({
+            ok: true,
+            fileExists: fileExists,
+            filePath: mainInfoPath,
+            directoryPath: path.join(__dirname, `../uploads/patient-data/${patientId}`),
+            fileContent: fileContent,
+            message: `JSON file location: ${mainInfoPath}`
+        });
+    } catch (error) {
+        console.error('Get main_info location error:', error);
+        res.status(500).json({
+            ok: false,
+            message: 'Error retrieving main_info location'
         });
     }
 });
