@@ -41,13 +41,27 @@ router.get('/doctor/:id', authMiddleware, checkRole(['doctor']), async (req, res
 });
 
 // Get patient dashboard data
-router.get('/patient/:id', authMiddleware, checkRole(['patient']), async (req, res) => {
+router.get('/patient/:identifier', authMiddleware, checkRole(['patient']), async (req, res) => {
     try {
-        const patient = await Patient.findById(req.user.id)
-            .select('-password');
+        const { identifier } = req.params;
+        
+        // Find patient by ID or fullName
+        let patient;
+        if (identifier.match(/^[0-9a-fA-F]{24}$/)) {
+            // It's likely an ObjectId
+            patient = await Patient.findById(identifier).select('-password');
+        } else {
+            // Search by fullName
+            patient = await Patient.findOne({ fullName: identifier }).select('-password');
+        }
 
         if (!patient) {
-            return res.status(404).json({ message: 'Patient not found' });
+            return res.status(404).json({ ok: false, message: 'Patient not found' });
+        }
+
+        // Check if the logged-in user is accessing their own data
+        if (patient._id.toString() !== req.user.id) {
+            return res.status(403).json({ ok: false, message: 'Access denied' });
         }
 
         // Include reports count in response
@@ -59,7 +73,8 @@ router.get('/patient/:id', authMiddleware, checkRole(['patient']), async (req, r
 
         res.json(dashboardData);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Patient dashboard error:', error);
+        res.status(500).json({ ok: false, message: 'Error fetching patient dashboard data' });
     }
 });
 

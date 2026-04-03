@@ -28,7 +28,9 @@ import {
   DialogContentText,
   DialogActions,
   Snackbar,
-  Alert
+  Alert,
+  Fab,
+  IconButton
 } from '@mui/material';
 import {
   LocalHospital,
@@ -36,7 +38,12 @@ import {
   FlashOn,
   Person,
   Search,
-  Add
+  Add,
+  Chat,
+  Send,
+  Close,
+  AttachFile,
+  Delete
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import dashboardService from '../../../services/dashboardService';
@@ -55,9 +62,37 @@ function DoctorDashboard() {
   const [careTasks, setCareTasks] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [patientDialogOpen, setPatientDialogOpen] = useState(false);
+  const [chatDialogOpen, setChatDialogOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatQuestion, setChatQuestion] = useState('');
+  const [chatLoading, setChatLoading] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const searchInputRef = useRef(null);
   const navigate = useNavigate();
+
+  // Load chat messages from localStorage when component mounts
+  useEffect(() => {
+    const savedChatMessages = localStorage.getItem('medicard_chat_messages');
+    if (savedChatMessages) {
+      try {
+        setChatMessages(JSON.parse(savedChatMessages));
+      } catch (err) {
+        console.error('Error loading chat messages:', err);
+      }
+    }
+  }, []);
+
+  // Save chat messages to localStorage whenever they change
+  useEffect(() => {
+    if (chatMessages.length > 0) {
+      try {
+        localStorage.setItem('medicard_chat_messages', JSON.stringify(chatMessages));
+      } catch (err) {
+        console.error('Error saving chat messages:', err);
+      }
+    }
+  }, [chatMessages]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -146,6 +181,135 @@ function DoctorDashboard() {
     } finally {
       setAddLoading(null);
     }
+  };
+
+  const handleOpenChat = () => {
+    setChatDialogOpen(true);
+    setChatQuestion('');
+    setUploadedFiles([]);
+  };
+
+  const handleCloseChat = () => {
+    setChatDialogOpen(false);
+    // Clear chat messages and localStorage when closing dialog
+    setChatMessages([]);
+    localStorage.removeItem('medicard_chat_messages');
+    setChatQuestion('');
+    setUploadedFiles([]);
+  };
+
+  const handleSendChatMessage = async () => {
+    if (!chatQuestion.trim() && uploadedFiles.length === 0) return;
+
+    const question = chatQuestion.trim();
+    setChatQuestion('');
+    setChatLoading(true);
+
+    // Add user message
+    const userMessage = question || `Uploaded ${uploadedFiles.length} file(s) for analysis`;
+    setChatMessages(prev => [...prev, { type: 'user', text: userMessage, files: uploadedFiles }]);
+
+    try {
+      // Read file contents
+      const fileContents = [];
+      for (const file of uploadedFiles) {
+        try {
+          const content = await file.text();
+          fileContents.push({
+            name: file.name,
+            type: file.type,
+            content: content
+          });
+        } catch (error) {
+          console.error('Error reading file:', file.name, error);
+          fileContents.push({
+            name: file.name,
+            type: file.type,
+            content: '[Error reading file]'
+          });
+        }
+      }
+
+      // Prepare patient data
+      const mockPatientData = {
+        patient_name: selectedPatient?.name || 'Patient',
+        patient_age: selectedPatient?.age || 0,
+        patient_history: selectedPatient?.condition ? 
+          `Patient has ${selectedPatient.condition}. Last visit: ${selectedPatient.lastVisit}.` :
+          'Patient medical history not available.',
+        question: question,
+        uploaded_files: fileContents
+      };
+
+      const response = await fetch('http://localhost:8000/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mockPatientData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response from AI assistant');
+      }
+
+      const data = await response.json();
+      
+      // Add AI response
+      setChatMessages(prev => [...prev, { type: 'ai', text: data.summary }]);
+      
+      // Clear uploaded files after successful send
+      setUploadedFiles([]);
+    } catch (error) {
+      console.error('Chat error:', error);
+      setChatMessages(prev => [...prev, { 
+        type: 'ai', 
+        text: 'Sorry, I encountered an error. Please try again or check if the AI service is running.' 
+      }]);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  const handleFileUpload = (event) => {
+    const files = Array.from(event.target.files);
+    const maxFileSize = 10 * 1024 * 1024; // 10MB
+    const maxFiles = 20;
+
+    if (uploadedFiles.length + files.length > maxFiles) {
+      setSnackbar({ open: true, message: `Maximum ${maxFiles} files allowed`, severity: 'error' });
+      return;
+    }
+
+    const validFiles = [];
+    const invalidFiles = [];
+
+    files.forEach(file => {
+      if (file.size > maxFileSize) {
+        invalidFiles.push(`${file.name} (too large)`);
+      } else {
+        validFiles.push(file);
+      }
+    });
+
+    if (invalidFiles.length > 0) {
+      setSnackbar({ 
+        open: true, 
+        message: `Files too large: ${invalidFiles.join(', ')}`, 
+        severity: 'error' 
+      });
+    }
+
+    if (validFiles.length > 0) {
+      setUploadedFiles(prev => [...prev, ...validFiles]);
+    }
+
+    // Clear the input
+    event.target.value = '';
+  };
+
+  const handleRemoveFile = (index) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const todaysAppointments = useMemo(() => {
@@ -536,6 +700,237 @@ function DoctorDashboard() {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      {/* ---- AI Chat Dialog ---- */}
+      <Dialog 
+        open={chatDialogOpen} 
+        onClose={handleCloseChat} 
+        maxWidth="md" 
+        fullWidth
+        sx={{ 
+          '& .MuiDialog-paper': { 
+            height: '80vh', 
+            borderRadius: '25px',
+            animation: 'dialogSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+          } 
+        }}
+        TransitionProps={{
+          style: {
+            background: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)'
+          }
+        }}
+      >
+        <DialogTitle sx={{ background: 'linear-gradient(135deg, var(--color-green) 0%, #059669 100%)', color: 'white', padding: '24px !important', borderRadius: '16px 16px 0 0 !important', display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Chat sx={{ fontSize: 24 }} />
+          <Typography sx={{ fontSize: '18px !important', fontWeight: '600 !important', flex: 1 }}>AI Medical Assistant</Typography>
+          <IconButton onClick={handleCloseChat} sx={{ minWidth: 'auto', p: 0.5, color: 'white', '&:hover': { background: 'rgba(255,255,255,0.2)' } }}>
+            <Close />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', height: '100%', padding: 0, gap: 0, background: '#FAFBFC' }}>
+          <Box sx={{ flex: 1, overflow: 'auto', mb: 0, p: '16px', background: '#FAFBFC' }}>
+            {chatMessages.length === 0 ? (
+              <Box sx={{ textAlign: 'center', padding: '40px 20px', color: 'var(--color-text-muted)' }}>
+                <Chat sx={{ fontSize: 48, color: 'var(--color-green)', opacity: 0.3, mb: 2 }} />
+                <Typography variant="body2">
+                  Ask me anything about patient medical records, treatment plans, or clinical questions.
+                  {selectedPatient && ` Currently analyzing: ${selectedPatient.name}`}
+                </Typography>
+              </Box>
+            ) : (
+              chatMessages.map((message, index) => (
+                <Box key={index} sx={{ mb: 2, display: 'flex', justifyContent: message.type === 'user' ? 'flex-end' : 'flex-start', gap: 1, alignItems: 'flex-end' }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: message.type === 'user' ? 'flex-end' : 'flex-start', maxWidth: '70%' }}>
+                    <Chip
+                      label={message.type === 'user' ? 'You' : 'AI Assistant'}
+                      size="small"
+                      color={message.type === 'user' ? 'primary' : 'success'}
+                      variant="outlined"
+                      sx={{ mb: 0.5, fontSize: '11px !important' }}
+                    />
+                    <Paper 
+                      sx={{ 
+                        p: '12px 16px', 
+                        borderRadius: message.type === 'user' ? '16px 4px 16px 16px' : '16px 16px 4px 16px',
+                        background: message.type === 'user' ? 'linear-gradient(135deg, var(--color-green) 0%, #059669 100%)' : 'white',
+                        color: message.type === 'user' ? 'white' : 'var(--color-text)',
+                        border: message.type === 'user' ? 'none' : '1px solid var(--color-border)',
+                        boxShadow: message.type === 'user' ? '0 2px 8px rgba(22, 163, 74, 0.2)' : '0 2px 8px rgba(0, 0, 0, 0.06)'
+                      }}
+                      elevation={0}
+                    >
+                      <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>
+                        {message.text}
+                      </Typography>
+                      {message.files && message.files.length > 0 && (
+                        <Box sx={{ mt: 1, pt: 1, borderTop: message.type === 'user' ? '1px solid rgba(255,255,255,0.3)' : '1px solid var(--color-border)' }}>
+                          <Typography variant="caption" sx={{ opacity: 0.85, fontStyle: 'italic' }}>
+                            📎 {message.files.map(f => f.name).join(', ')}
+                          </Typography>
+                        </Box>
+                      )}
+                    </Paper>
+                  </Box>
+                </Box>
+              ))
+            )}
+            {chatLoading && (
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3, mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ 
+                    width: 8, 
+                    height: 8, 
+                    borderRadius: '50%', 
+                    background: 'var(--color-green)',
+                    animation: 'pulse 1.5s ease-in-out infinite'
+                  }} />
+                  <Box sx={{ 
+                    width: 8, 
+                    height: 8, 
+                    borderRadius: '50%', 
+                    background: 'var(--color-green)',
+                    animation: 'pulse 1.5s ease-in-out infinite 0.2s'
+                  }} />
+                  <Box sx={{ 
+                    width: 8, 
+                    height: 8, 
+                    borderRadius: '50%', 
+                    background: 'var(--color-green)',
+                    animation: 'pulse 1.5s ease-in-out infinite 0.4s'
+                  }} />
+                  <Typography variant="body2" sx={{ ml: 1, color: 'var(--color-text-muted)', fontSize: '13px' }}>
+                    Analyzing...
+                  </Typography>
+                </Box>
+              </Box>
+            )}
+          </Box>
+          
+          {/* File Upload Section */}
+          {uploadedFiles.length > 0 && (
+            <Box sx={{ background: 'white', borderTop: '1px solid var(--color-border)', p: '12px 16px' }}>
+              <Typography variant="body2" sx={{ mb: 1, fontWeight: 600, color: 'var(--color-text)', fontSize: '13px' }}>
+                📎 Uploaded Files ({uploadedFiles.length}/20):
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {uploadedFiles.map((file, index) => (
+                  <Chip
+                    key={index}
+                    label={`${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB)`}
+                    onDelete={() => handleRemoveFile(index)}
+                    size="small"
+                    sx={{
+                      background: 'var(--color-green-light)',
+                      border: '1px solid var(--color-green)',
+                      color: 'var(--color-green)',
+                      fontSize: '12px !important',
+                      '& .MuiChip-deleteIcon': { color: 'var(--color-green) !important' }
+                    }}
+                  />
+                ))}
+              </Box>
+            </Box>
+          )}
+
+          {/* Chat Input Area */}
+          <Box sx={{ background: 'white', borderTop: '1px solid var(--color-border)', p: '16px', display: 'flex', gap: 1, alignItems: 'flex-end' }}>
+            <input
+              accept="*/*"
+              style={{ display: 'none' }}
+              id="file-upload"
+              multiple
+              type="file"
+              onChange={handleFileUpload}
+            />
+            <label htmlFor="file-upload" style={{ display: 'flex' }}>
+              <IconButton 
+                component="span" 
+                sx={{ 
+                  color: uploadedFiles.length >= 20 ? '#D1D5DB' : 'var(--color-text-secondary)',
+                  '&:hover': { background: uploadedFiles.length >= 20 ? 'transparent' : 'var(--color-green-light)', color: uploadedFiles.length >= 20 ? '#D1D5DB' : 'var(--color-green)' },
+                  borderRadius: '10px',
+                  width: 44,
+                  height: 44,
+                  p: 0
+                }}
+                disabled={uploadedFiles.length >= 20}
+              >
+                <AttachFile />
+              </IconButton>
+            </label>
+            <TextField
+              fullWidth
+              placeholder="Ask about patient history, upload reports, or request clinical analysis..."
+              value={chatQuestion}
+              onChange={(e) => setChatQuestion(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendChatMessage()}
+              disabled={chatLoading}
+              size="small"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '12px !important',
+                  background: 'white',
+                }
+              }}
+            />
+            <Button
+              variant="contained"
+              onClick={handleSendChatMessage}
+              disabled={(!chatQuestion.trim() && uploadedFiles.length === 0) || chatLoading}
+              sx={{ 
+                minWidth: 'auto', 
+                px: 0,
+                width: 44,
+                height: 44,
+                borderRadius: '10px',
+                background: (!chatQuestion.trim() && uploadedFiles.length === 0) || chatLoading ? '#D1D5DB' : 'var(--color-green)',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                '&:hover': {
+                  background: (!chatQuestion.trim() && uploadedFiles.length === 0) || chatLoading ? '#D1D5DB' : 'var(--color-green-hover)',
+                  transform: (!chatQuestion.trim() && uploadedFiles.length === 0) || chatLoading ? 'none' : 'scale(1.05)',
+                },
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <Send />
+            </Button>
+          </Box>
+        </DialogContent>
+      </Dialog>
+
+      {/* ---- Floating Chat Button ---- */}
+      <Fab
+        color="primary"
+        aria-label="chat"
+        onClick={handleOpenChat}
+        sx={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+          background: 'linear-gradient(135deg, var(--color-green) 0%, #059669 100%)',
+          color: 'white',
+          width: 64,
+          height: 64,
+          fontSize: 28,
+          boxShadow: '0 8px 24px rgba(22, 163, 74, 0.35)',
+          transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          zIndex: 1000,
+          '&:hover': {
+            transform: 'scale(1.15) translateY(-4px)',
+            boxShadow: '0 12px 32px rgba(22, 163, 74, 0.5)'
+          },
+          '&:active': {
+            transform: 'scale(0.95)'
+          }
+        }}
+      >
+        <Chat sx={{ fontSize: 28 }} />
+      </Fab>
     </div>
   );
 }

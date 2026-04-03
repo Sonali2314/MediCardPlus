@@ -23,8 +23,8 @@ const dashboardService = {
         return data;
     },
 
-    getPatientDashboard: async (id, token) => {
-        const response = await fetch(`${API_URL}/dashboard/patient/${id}`, {
+    getPatientDashboard: async (identifier, token) => {
+        const response = await fetch(`${API_URL}/dashboard/patient/${encodeURIComponent(identifier)}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

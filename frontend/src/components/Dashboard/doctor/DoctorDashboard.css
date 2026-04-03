@@ -369,6 +369,502 @@
   color: var(--color-text) !important;
 }
 
+/* ---- AI Chat Dialog ---- */
+.MuiDialog-root .MuiDialog-paper {
+  border-radius: 24px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  overflow: hidden;
+}
+
+.dd-chat-dialog-title {
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.9) 0%, rgba(5, 150, 105, 0.9) 100%);
+  color: white;
+  padding: 28px 32px !important;
+  border-radius: 24px 24px 0 0 !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(22, 163, 74, 0.15);
+}
+
+.dd-chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  max-height: calc(80vh - 320px);
+  overflow-y: auto;
+  background: rgba(250, 251, 252, 0.8);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.dd-chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dd-chat-messages::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.dd-chat-messages::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(22, 163, 74, 0.6) 0%, rgba(5, 150, 105, 0.6) 100%);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.dd-chat-messages::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(22, 163, 74, 0.8) 0%, rgba(5, 150, 105, 0.8) 100%);
+  transform: scaleX(1.2);
+}
+
+.dd-message-container {
+  display: flex;
+  gap: 12px;
+  animation: slideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-bottom: 8px;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.dd-message-container.user {
+  justify-content: flex-end;
+}
+
+.dd-message-container.ai {
+  justify-content: flex-start;
+}
+
+.dd-message-bubble {
+  max-width: 75%;
+  padding: 16px 20px;
+  border-radius: 20px;
+  word-wrap: break-word;
+  line-height: 1.5;
+  font-size: 15px;
+  position: relative;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.dd-message-bubble:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.dd-message-bubble.user {
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.95) 0%, rgba(5, 150, 105, 0.95) 100%);
+  color: white;
+  border-bottom-right-radius: 6px;
+  box-shadow: 0 4px 15px rgba(22, 163, 74, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dd-message-bubble.user::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: 20px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid rgba(5, 150, 105, 0.95);
+}
+
+.dd-message-bubble.ai {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-text);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-bottom-left-radius: 6px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+}
+
+.dd-message-bubble.ai::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 20px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid rgba(255, 255, 255, 0.9);
+}
+
+.dd-message-label {
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.8;
+}
+
+.dd-message-label.user {
+  justify-content: flex-end;
+  color: rgba(22, 163, 74, 0.8);
+}
+
+.dd-message-label.ai {
+  color: var(--color-text-secondary);
+}
+
+.dd-message-files {
+  margin-top: 12px;
+  font-size: 13px;
+  opacity: 0.9;
+  font-style: italic;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dd-chat-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 16px 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.dd-chat-empty {
+  text-align: center;
+  padding: 60px 32px;
+  color: var(--color-text-muted);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  margin: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+/* ---- File Upload Section ---- */
+.dd-file-upload-section {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 16px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.dd-file-upload-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dd-file-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dd-file-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(22, 163, 74, 0.2);
+  color: var(--color-green);
+  padding: 8px 14px;
+  border-radius: 24px;
+  font-size: 13px;
+  font-weight: 500;
+  animation: fileSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.1);
+}
+
+@keyframes fileSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) rotate(-5deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.dd-file-chip:hover {
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.2) 0%, rgba(5, 150, 105, 0.2) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.15);
+}
+
+/* ---- Chat Input Area ---- */
+.dd-chat-input-area {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 24px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.dd-chat-input-field {
+  flex: 1;
+}
+
+.dd-chat-input-field .MuiOutlinedInput-root {
+  border-radius: 16px !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  font-size: 15px !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06) !important;
+  transition: all 0.3s ease !important;
+}
+
+.dd-chat-input-field .MuiOutlinedInput-root:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.dd-chat-input-field .MuiOutlinedInput-root.Mui-focused {
+  background: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15), 0 4px 20px rgba(0, 0, 0, 0.12) !important;
+  border-color: rgba(22, 163, 74, 0.3) !important;
+}
+
+.dd-chat-send-btn {
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.9) 0%, rgba(5, 150, 105, 0.9) 100%) !important;
+  color: white !important;
+  border-radius: 14px !important;
+  min-width: 50px;
+  height: 50px;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  box-shadow: 0 4px 15px rgba(22, 163, 74, 0.3) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.dd-chat-send-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(22, 163, 74, 1) 0%, rgba(5, 150, 105, 1) 100%) !important;
+  transform: scale(1.1) translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(22, 163, 74, 0.4) !important;
+}
+
+.dd-chat-send-btn:active:not(:disabled) {
+  transform: scale(0.95) !important;
+}
+
+.dd-chat-send-btn:disabled {
+  background: rgba(209, 213, 219, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.dd-file-upload-btn {
+  color: var(--color-text-secondary) !important;
+  border-radius: 14px !important;
+  min-width: 50px;
+  height: 50px;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06) !important;
+}
+
+.dd-file-upload-btn:hover:not(:disabled) {
+  color: var(--color-green) !important;
+  background: rgba(22, 163, 74, 0.1) !important;
+  transform: scale(1.1) translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(22, 163, 74, 0.2) !important;
+}
+
+.dd-file-upload-btn:disabled {
+  color: rgba(209, 213, 219, 0.8) !important;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ---- Floating Action Button ---- */
+.dd-fab-button {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.9) 0%, rgba(5, 150, 105, 0.9) 100%) !important;
+  color: white !important;
+  box-shadow: 0 8px 32px rgba(22, 163, 74, 0.4) !important;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  z-index: 1000;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.dd-fab-button:hover {
+  transform: scale(1.15) translateY(-8px) !important;
+  box-shadow: 0 16px 40px rgba(22, 163, 74, 0.5) !important;
+  background: linear-gradient(135deg, rgba(22, 163, 74, 1) 0%, rgba(5, 150, 105, 1) 100%) !important;
+}
+
+.dd-fab-button:active {
+  transform: scale(0.95) !important;
+}
+
+/* ---- Dialog Title with Icon ---- */
+.dd-chat-dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.dd-chat-dialog-header-icon {
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.dd-chat-dialog-close-btn {
+  margin-left: auto;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.dd-chat-dialog-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .dd-fab-button {
+    bottom: 20px;
+    right: 20px;
+    width: 64px;
+    height: 64px;
+    font-size: 28px;
+  }
+
+  .dd-message-bubble {
+    max-width: 85%;
+    font-size: 14px;
+    padding: 14px 18px;
+  }
+
+  .dd-chat-messages {
+    max-height: calc(80vh - 300px);
+    padding: 20px;
+  }
+
+  .dd-chat-input-area {
+    padding: 20px;
+  }
+
+  .dd-file-upload-section {
+    margin: 12px 20px;
+    padding: 16px;
+  }
+
+  .MuiDialog-root .MuiDialog-paper {
+    margin: 8px !important;
+    max-height: 90vh !important;
+  }
+
+  .dd-chat-dialog-title {
+    padding: 24px 20px !important;
+  }
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 768px) {
   .dd-header {
