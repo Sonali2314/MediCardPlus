@@ -1,6 +1,7 @@
 import express from 'express';
 import auth, { checkRole } from '../middleware/auth.js';
 import Patient from '../models/patientModel.js';
+import Doctor from '../models/doctorModel.js';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -292,7 +293,10 @@ router.get('/main-info-location', auth, checkRole(['patient']), async (req, res)
 router.get('/list', auth, checkRole(['doctor']), async (req, res) => {
     try {
         // Get doctor's assigned patients from database
-        const doctor = await Patient.findById(req.user.id);
+        const doctor = await Doctor.findById(req.user.id).populate(
+            'patients',
+            'fullName dateOfBirth gender phoneNumber email age bloodGroup condition'
+        );
         
         if (!doctor) {
             return res.status(404).json({
@@ -301,16 +305,22 @@ router.get('/list', auth, checkRole(['doctor']), async (req, res) => {
             });
         }
 
-        // Query for patients (you may need to adjust this based on your Doctor model)
-        // Assuming doctors have a list of patient IDs or there's a separate relationship
-        const patients = await Patient.find({
-            // Query to find patients associated with this doctor
-            // This assumes there's a doctorId field in Patient model or similar
-        }).select('_id name age gender bloodGroup condition lastVisit email phoneNumber');
+        // Transform data to match chatbot component expectations
+        const transformedPatients = doctor.patients.map(patient => ({
+            _id: patient._id,
+            id: patient._id,
+            name: patient.fullName,
+            age: patient.age || (new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear()),
+            gender: patient.gender,
+            bloodGroup: patient.bloodGroup,
+            condition: patient.condition || 'N/A',
+            email: patient.email,
+            phoneNumber: patient.phoneNumber
+        }));
 
         res.json({
             ok: true,
-            patients: patients || []
+            patients: transformedPatients
         });
     } catch (error) {
         console.error('Get patients list error:', error);

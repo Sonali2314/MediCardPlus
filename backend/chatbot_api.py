@@ -24,11 +24,11 @@ app.add_middleware(
 )
 
 # HuggingFace API Configuration
-HF_API_TOKEN = os.getenv("HF_API_TOKEN", "YOUR_TOKEN_HERE")
+HF_API_TOKEN = os.getenv("HF_API_TOKEN", "Token")
 HF_API_URL = "https://api-inference.huggingface.co/models/meta-llama/Llama-3.2-3B-Instruct"
 
-# Path to patient data files
-PATIENT_DATA_DIR = Path("../backend/uploads/patient-data")
+# Path to patient data files (run from backend directory)
+PATIENT_DATA_DIR = Path("./uploads/patient-data")
 
 # Request/Response Models
 class ChatRequest(BaseModel):
