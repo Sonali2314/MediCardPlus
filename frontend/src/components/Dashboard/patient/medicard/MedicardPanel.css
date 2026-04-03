@@ -6,7 +6,9 @@
 .patient-emergency-card-wrapper{ display:flex; justify-content:center; align-items:center }
 
 .patient-emergency-card{
-  width:360px;
+  width:100%;
+  max-width:420px;
+  min-width:320px;
   padding:22px;
   border-radius:14px;
   background: linear-gradient(135deg,#fff,#f3f7ff);
@@ -17,28 +19,34 @@
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:12px;
+  margin-bottom:14px;
 }
 
-.patient-emergency-card .card-brand{ color:var(--pd-primary); font-weight:700 }
-.patient-emergency-card .card-id{ color:#64748b; font-weight:500 }
+.patient-emergency-card .card-brand{ color:var(--pd-primary); font-weight:700; letter-spacing:0.04em }
+.patient-emergency-card .card-id{ color:#64748b; font-weight:600; font-size:0.85rem }
 
-.patient-emergency-card .card-body{ display:flex; gap:16px }
-.patient-emergency-card .card-info{ flex:1 }
-.patient-emergency-card .card-info h2{ margin:0 0 8px }
-.patient-emergency-card .card-meta{ margin:0 0 12px; color:var(--pd-muted); font-size:13px }
+.patient-emergency-card .card-body{ display:flex; gap:16px; align-items:flex-start; flex-wrap:nowrap; }
+.patient-emergency-card .card-info{ flex:1; min-width:200px; overflow-wrap:anywhere }
+.patient-emergency-card .card-info h2{ margin:0 0 8px; font-size:1.25rem; line-height:1.2 }
+.patient-emergency-card .card-meta{ margin:0 0 12px; color:var(--pd-muted); font-size:13px; word-break:break-word }
 
-.patient-emergency-card .card-grid{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; font-size:12px }
+.patient-emergency-card .card-grid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px; font-size:12px; word-break:break-word }
 .patient-emergency-card .label{ display:block; color:#94a3b8; text-transform:uppercase; font-size:11px; margin-bottom:2px }
-.patient-emergency-card .value{ display:block; color:#0f172a; font-weight:600 }
-.patient-emergency-card .card-emergency-note{ margin-top:12px; padding:10px; background: rgba(47,116,192,0.06); border-radius:8px; font-size:12px }
+.patient-emergency-card .value{ display:block; color:#0f172a; font-weight:600; overflow-wrap:anywhere; white-space:normal }
+.patient-emergency-card .value.email-value{ min-width:0; overflow-wrap:anywhere; max-width: 170px; }
+.patient-emergency-card .card-emergency-note{ margin-top:12px; padding:10px; background: rgba(47,116,192,0.06); border-radius:8px; font-size:12px; color:#1f2937 }
 
 .patient-emergency-card .card-qr{ flex:0 0 140px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px }
 .patient-emergency-card .qr-caption{ font-size:11px; color:var(--pd-muted); text-align:center }
 
-@media (max-width:600px){
-  .patient-emergency-card{ width:100% }
+@media (max-width:820px){
+  .patient-emergency-card{ max-width:100%; width:100%; }
   .patient-emergency-card .card-body{ flex-direction:column; align-items:center }
-  .patient-emergency-card .card-info{ text-align:center }
-  .patient-emergency-card .card-grid{ grid-template-columns:repeat(2,1fr) }
+  .patient-emergency-card .card-info{ text-align:center; }
+  .patient-emergency-card .card-grid{ grid-template-columns:1fr; }
+  .patient-emergency-card .card-qr{ margin-top:14px; }
+}
+
+@media (min-width:821px){
+  .patient-emergency-card { height: auto; }
 }

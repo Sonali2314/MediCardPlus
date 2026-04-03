@@ -25,15 +25,17 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogContentText,
   DialogActions,
   Snackbar,
   Alert,
   Fab,
-  IconButton
+  IconButton,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import {
-  LocalHospital,
   CalendarToday,
   FlashOn,
   Person,
@@ -42,11 +44,11 @@ import {
   Chat,
   Send,
   Close,
-  AttachFile,
-  Delete
+  AttachFile
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import dashboardService from '../../../services/dashboardService';
+import EmergencyCard from '../patient/medicard/EmergencyCard';
 import './DoctorDashboard.css';
 
 function DoctorDashboard() {
@@ -62,6 +64,8 @@ function DoctorDashboard() {
   const [careTasks, setCareTasks] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [patientDialogOpen, setPatientDialogOpen] = useState(false);
+  const [patientData, setPatientData] = useState(null);
+  const [loadingPatientData, setLoadingPatientData] = useState(false);
   const [chatDialogOpen, setChatDialogOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
   const [chatQuestion, setChatQuestion] = useState('');
@@ -121,7 +125,7 @@ function DoctorDashboard() {
             reason: patient.condition !== 'N/A' ? patient.condition : 'Routine check-up',
             time: slot.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             location: index % 2 === 0 ? 'Room 204' : 'Tele-consult',
-            priority: index === 0 ? 'High' : index % 3 === 0 ? 'Medium' : 'Low'
+            priority: 'Medium'
           };
         });
         setAppointments(generatedAppointments);
@@ -159,7 +163,14 @@ function DoctorDashboard() {
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
-  const displayPatients = searchQuery.trim() ? patients : doctorPatients;
+  const normalizedSearch = searchQuery.trim().toLowerCase();
+  const filteredDoctorPatients = normalizedSearch
+    ? doctorPatients.filter((patient) => patient.name.toLowerCase().includes(normalizedSearch))
+    : doctorPatients;
+
+  const displayPatients = normalizedSearch
+    ? (patients.length > 0 ? patients : filteredDoctorPatients)
+    : doctorPatients;
 
   const handleAddPatient = async (patientId) => {
     setAddLoading(patientId);
@@ -312,6 +323,31 @@ function DoctorDashboard() {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
+  const handleUpdateAppointmentPriority = (appointmentId, value) => {
+    setAppointments(prev => prev.map(appt => appt.id === appointmentId ? { ...appt, priority: value } : appt));
+  };
+
+  const handleViewPatient = async (patient) => {
+    setSelectedPatient(patient);
+    setPatientDialogOpen(true);
+    setLoadingPatientData(true);
+    try {
+      const userData = localStorage.getItem('user');
+      const token = localStorage.getItem('token');
+      let user = null;
+      try { user = userData ? JSON.parse(userData) : null; } catch { user = null; }
+      if (user && token) {
+        const data = await dashboardService.getPatientDashboard(patient.id, token);
+        setPatientData(data);
+      }
+    } catch (err) {
+      console.error('Error fetching patient data:', err);
+      setPatientData(null);
+    } finally {
+      setLoadingPatientData(false);
+    }
+  };
+
   const todaysAppointments = useMemo(() => {
     if (!appointments.length) return 0;
     const today = new Date().toDateString();
@@ -325,6 +361,24 @@ function DoctorDashboard() {
     () => careTasks.filter(task => task.priority === 'High').length,
     [careTasks]
   );
+
+  const mediumAppointments = useMemo(
+    () => appointments.filter(appt => appt.priority === 'Medium').length,
+    [appointments]
+  );
+
+  const lowAppointments = useMemo(
+    () => appointments.filter(appt => appt.priority === 'Low').length,
+    [appointments]
+  );
+
+  const emergencyQrPayload = patientData ? JSON.stringify({
+    id: patientData._id,
+    name: patientData.fullName,
+    bloodGroup: patientData.bloodGroup || 'Unknown',
+    phone: patientData.phoneNumber,
+    emergencyNote: 'For emergency use only'
+  }) : '';
 
   if (loading) {
     return (
@@ -522,7 +576,7 @@ function DoctorDashboard() {
                               className="dd-btn-outline-blue"
                               variant="outlined"
                               size="small"
-                              onClick={() => { setSelectedPatient(patient); setPatientDialogOpen(true); }}
+                              onClick={() => handleViewPatient(patient)}
                             >
                               View
                             </Button>
@@ -550,7 +604,12 @@ function DoctorDashboard() {
           <Grid item xs={12} md={6}>
             <Paper className="dd-card" elevation={0}>
               <div className="dd-card-header">
-                <Typography className="dd-card-title">Today's Schedule</Typography>
+                <div>
+                  <Typography className="dd-card-title">Today's Schedule</Typography>
+                  <Typography variant="body2" sx={{ color: 'var(--color-text-muted)' }}>
+                    Medium {mediumAppointments} • Low {lowAppointments}
+                  </Typography>
+                </div>
                 <Chip label={`${appointments.length} bookings`} size="small" variant="outlined"
                   sx={{ borderColor: 'var(--color-green)', color: 'var(--color-green)', fontSize: 12 }} />
               </div>
@@ -559,40 +618,51 @@ function DoctorDashboard() {
                   No appointments scheduled for today.
                 </Typography>
               ) : (
-                <List dense className="dd-schedule-list" disablePadding>
+                <Box className="dd-schedule-grid">
                   {appointments.map((appointment, index) => (
-                    <React.Fragment key={appointment.id}>
-                      <ListItem alignItems="flex-start" sx={{ px: 0 }}>
-                        <ListItemAvatar>
-                          <Avatar className={index === 0 ? 'dd-list-avatar-green' : 'dd-list-avatar-blue'}>
-                            {appointment.patientName?.charAt(0) || 'P'}
-                          </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText
-                          primary={<Typography sx={{ fontSize: 14, fontWeight: 500 }}>{appointment.patientName}</Typography>}
-                          secondary={
-                            <>
-                              <Typography component="span" variant="body2" sx={{ color: 'var(--color-text-secondary)' }}>
-                                {appointment.time} · {appointment.location}
-                              </Typography>
-                              <Typography component="span" variant="body2" sx={{ color: 'var(--color-text-muted)', display: 'block' }}>
-                                {appointment.reason}
-                              </Typography>
-                            </>
-                          }
+                    <Paper key={appointment.id} className="dd-schedule-item" elevation={0}>
+                      <Box className="dd-schedule-item-head">
+                        <Avatar className={index === 0 ? 'dd-list-avatar-green' : 'dd-list-avatar-blue'}>
+                          {appointment.patientName?.charAt(0) || 'P'}
+                        </Avatar>
+                        <Typography sx={{ fontSize: 14, fontWeight: 600, ml: 1, lineHeight: 1.2 }}>
+                          {appointment.patientName}
+                        </Typography>
+                      </Box>
+
+                      <Box className="dd-schedule-item-main">
+                        <Typography variant="body2" sx={{ color: 'var(--color-text-secondary)', fontSize: 12, fontWeight: 500 }}>
+                          {appointment.time} - {appointment.location}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: 'var(--color-text-muted)', fontSize: 12 }}>
+                          {appointment.reason}
+                        </Typography>
+                      </Box>
+
+                      <Box className="dd-schedule-item-footer">
+                        <FormControl size="small" sx={{ width: '100%' }}>
+                          <InputLabel id={`priority-label-${appointment.id}`}>Priority</InputLabel>
+                          <Select
+                            labelId={`priority-label-${appointment.id}`}
+                            value={appointment.priority}
+                            label="Priority"
+                            onChange={(e) => handleUpdateAppointmentPriority(appointment.id, e.target.value)}
+                            sx={{ fontSize: 12, height: 34 }}
+                          >
+                            <MenuItem value="Low">Low</MenuItem>
+                            <MenuItem value="Medium">Medium</MenuItem>
+                          </Select>
+                        </FormControl>
+                        <Chip
+                          label={appointment.priority}
+                          color={appointment.priority === 'Medium' ? 'warning' : 'default'}
+                          size="small"
+                          sx={{ fontWeight: 600, minWidth: 64 }}
                         />
-                        <ListItemSecondaryAction>
-                          <Chip
-                            label={appointment.priority}
-                            color={appointment.priority === 'High' ? 'error' : appointment.priority === 'Medium' ? 'warning' : 'default'}
-                            size="small"
-                          />
-                        </ListItemSecondaryAction>
-                      </ListItem>
-                      {index < appointments.length - 1 && <Divider component="li" />}
-                    </React.Fragment>
+                      </Box>
+                    </Paper>
                   ))}
-                </List>
+                </Box>
               )}
             </Paper>
           </Grid>
@@ -648,44 +718,29 @@ function DoctorDashboard() {
       </div>
 
       {/* ---- Patient Dialog ---- */}
-      <Dialog open={patientDialogOpen} onClose={() => setPatientDialogOpen(false)} maxWidth="xs" fullWidth>
+      <Dialog open={patientDialogOpen} onClose={() => { setPatientDialogOpen(false); setPatientData(null); }} maxWidth="md" fullWidth>
         <DialogTitle>
-          <Typography className="dd-dialog-title">Patient Snapshot</Typography>
+          <Typography className="dd-dialog-title">Patient Medicard</Typography>
         </DialogTitle>
         <DialogContent dividers>
-          {selectedPatient ? (
-            <>
-              <DialogContentText component="div">
-                <Typography className="dd-patient-name-dialog">{selectedPatient.name}</Typography>
-                <Typography variant="body2" sx={{ color: 'var(--color-text-muted)' }}>Age {selectedPatient.age}</Typography>
-              </DialogContentText>
-              <Box mt={2} sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Typography variant="body2"><strong>Current Concern:</strong> {selectedPatient.condition}</Typography>
-                <Typography variant="body2"><strong>Last Visit:</strong> {selectedPatient.lastVisit}</Typography>
-              </Box>
-              <Box mt={2}>
-                <Typography variant="body2" sx={{ color: 'var(--color-text-muted)' }}>
-                  Additional medical history coming soon.
-                </Typography>
-              </Box>
-            </>
+          {loadingPatientData ? (
+            <Box display="flex" justifyContent="center" alignItems="center" py={4}>
+              <CircularProgress sx={{ color: 'var(--color-green)' }} />
+            </Box>
+          ) : patientData ? (
+            <Box display="flex" justifyContent="center">
+              <EmergencyCard
+                dashboardData={patientData}
+                emergencyQrPayload={emergencyQrPayload}
+              />
+            </Box>
           ) : (
-            <Typography variant="body2">No patient selected.</Typography>
+            <Typography variant="body2">Unable to load patient medicard.</Typography>
           )}
         </DialogContent>
         <DialogActions sx={{ px: 3, py: 2, gap: 1 }}>
           <Button className="dd-btn-outline-blue" variant="outlined" onClick={() => setPatientDialogOpen(false)}>
             Close
-          </Button>
-          <Button
-            className="dd-btn-primary"
-            variant="contained"
-            onClick={() => {
-              setPatientDialogOpen(false);
-              setSnackbar({ open: true, message: 'Patient summary exported', severity: 'success' });
-            }}
-          >
-            Export Summary
           </Button>
         </DialogActions>
       </Dialog>

@@ -278,21 +278,70 @@
 }
 
 /* ---- Schedule & Tasks list ---- */
-.dd-schedule-list,
+.dd-schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  max-height: min(400px, 44vh);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.dd-schedule-item {
+  background: var(--color-white) !important;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 120px;
+}
+
+.dd-schedule-item-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dd-schedule-item-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dd-schedule-item-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .dd-tasks-list {
-  max-height: 320px;
+  max-height: min(400px, 44vh);
   overflow-y: auto;
 }
 
-.dd-schedule-list::-webkit-scrollbar,
+.dd-schedule-grid::-webkit-scrollbar,
 .dd-tasks-list::-webkit-scrollbar {
   width: 6px;
 }
 
-.dd-schedule-list::-webkit-scrollbar-thumb,
+.dd-schedule-grid::-webkit-scrollbar-thumb,
 .dd-tasks-list::-webkit-scrollbar-thumb {
   background-color: rgba(148, 163, 184, 0.4);
   border-radius: 4px;
+}
+
+@media (max-width:960px) {
+  .dd-schedule-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width:700px) {
+  .dd-schedule-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ---- List item avatar colors ---- */

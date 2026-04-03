@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import authMiddleware, { checkRole } from '../middleware/auth.js';
 import Patient from '../models/patientModel.js';
 import Doctor from '../models/doctorModel.js';
@@ -41,7 +42,7 @@ router.get('/doctor/:id', authMiddleware, checkRole(['doctor']), async (req, res
 });
 
 // Get patient dashboard data
-router.get('/patient/:identifier', authMiddleware, checkRole(['patient']), async (req, res) => {
+router.get('/patient/:identifier', authMiddleware, checkRole(['patient', 'doctor']), async (req, res) => {
     try {
         const { identifier } = req.params;
         
@@ -59,9 +60,18 @@ router.get('/patient/:identifier', authMiddleware, checkRole(['patient']), async
             return res.status(404).json({ ok: false, message: 'Patient not found' });
         }
 
-        // Check if the logged-in user is accessing their own data
-        if (patient._id.toString() !== req.user.id) {
-            return res.status(403).json({ ok: false, message: 'Access denied' });
+        // Check permissions
+        if (req.user.role === 'patient') {
+            // Patients can only access their own data
+            if (patient._id.toString() !== req.user.id) {
+                return res.status(403).json({ ok: false, message: 'Access denied' });
+            }
+        } else if (req.user.role === 'doctor') {
+            // Doctors can access patients associated with them
+            const doctor = await Doctor.findById(req.user.id);
+            if (!doctor || !doctor.patients.includes(patient._id)) {
+                return res.status(403).json({ ok: false, message: 'Access denied: Patient not associated with this doctor' });
+            }
         }
 
         // Include reports count in response
@@ -112,13 +122,20 @@ router.get('/doctor/:id/search-patients', authMiddleware, checkRole(['doctor']),
             return res.status(400).json({ message: 'Search query is required' });
         }
 
-        // Search by ID (exact match) or fullName (case-insensitive partial match)
+        const trimmed = search.trim();
+        const escaped = trimmed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(escaped, 'i');
+
+        // Search by fullName (case-insensitive partial/substring match); include ID match only when valid objectId
         const query = {
             $or: [
-                { _id: search.trim() },
-                { fullName: { $regex: search.trim(), $options: 'i' } }
+                { fullName: { $regex: regex } }
             ]
         };
+
+        if (mongoose.Types.ObjectId.isValid(trimmed)) {
+            query.$or.push({ _id: trimmed });
+        }
 
         const patients = await Patient.find(query)
             .select('fullName dateOfBirth gender phoneNumber email')
