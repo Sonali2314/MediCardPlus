@@ -288,4 +288,37 @@ router.get('/main-info-location', auth, checkRole(['patient']), async (req, res)
     }
 });
 
+// Get list of patients for doctor (for chatbot)
+router.get('/list', auth, checkRole(['doctor']), async (req, res) => {
+    try {
+        // Get doctor's assigned patients from database
+        const doctor = await Patient.findById(req.user.id);
+        
+        if (!doctor) {
+            return res.status(404).json({
+                ok: false,
+                message: 'Doctor not found'
+            });
+        }
+
+        // Query for patients (you may need to adjust this based on your Doctor model)
+        // Assuming doctors have a list of patient IDs or there's a separate relationship
+        const patients = await Patient.find({
+            // Query to find patients associated with this doctor
+            // This assumes there's a doctorId field in Patient model or similar
+        }).select('_id name age gender bloodGroup condition lastVisit email phoneNumber');
+
+        res.json({
+            ok: true,
+            patients: patients || []
+        });
+    } catch (error) {
+        console.error('Get patients list error:', error);
+        res.status(500).json({
+            ok: false,
+            message: 'Error fetching patients list'
+        });
+    }
+});
+
 export default router;

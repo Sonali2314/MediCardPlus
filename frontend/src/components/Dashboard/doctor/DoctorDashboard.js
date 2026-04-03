@@ -44,11 +44,13 @@ import {
   Chat,
   Send,
   Close,
-  AttachFile
+  AttachFile,
+  SmartToy
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import dashboardService from '../../../services/dashboardService';
 import EmergencyCard from '../patient/medicard/EmergencyCard';
+import ChatBot from './ChatBot';
 import './DoctorDashboard.css';
 
 function DoctorDashboard() {
@@ -67,6 +69,7 @@ function DoctorDashboard() {
   const [patientData, setPatientData] = useState(null);
   const [loadingPatientData, setLoadingPatientData] = useState(false);
   const [chatDialogOpen, setChatDialogOpen] = useState(false);
+  const [chatbotOpen, setChatbotOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
   const [chatQuestion, setChatQuestion] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
@@ -961,8 +964,8 @@ function DoctorDashboard() {
       {/* ---- Floating Chat Button ---- */}
       <Fab
         color="primary"
-        aria-label="chat"
-        onClick={handleOpenChat}
+        aria-label="medical-chatbot"
+        onClick={() => setChatbotOpen(true)}
         sx={{
           position: 'fixed',
           bottom: 24,
@@ -983,9 +986,20 @@ function DoctorDashboard() {
             transform: 'scale(0.95)'
           }
         }}
+        title="Open Medical Chatbot"
       >
-        <Chat sx={{ fontSize: 28 }} />
+        <SmartToy sx={{ fontSize: 28 }} />
       </Fab>
+
+      {/* ---- Medical Chatbot Dialog ---- */}
+      {chatbotOpen && (
+        <ChatBot
+          open={chatbotOpen}
+          onClose={() => setChatbotOpen(false)}
+          doctorName={dashboardData?.fullName || 'Doctor'}
+          token={localStorage.getItem('token')}
+        />
+      )}
     </div>
   );
 }
