@@ -1,11 +1,11 @@
 import React from 'react';
 import {
   Grid, Paper, Typography, TableContainer, Table,
-  TableHead, TableRow, TableCell, TableBody, Button, Box
+  TableHead, TableRow, TableCell, TableBody, Box
 } from '@mui/material';
 // replaced icon usage with emojis to avoid @mui/icons-material package issues
 
-export default function HistoryPanel({ prescriptions, medicalRecords, handleFileDownload }) {
+export default function HistoryPanel({ prescriptions, medicalRecords, reports, handleFileDownload }) {
   return (
     <Grid container spacing={3}>
 
@@ -24,14 +24,14 @@ export default function HistoryPanel({ prescriptions, medicalRecords, handleFile
               <TableHead>
                 <TableRow>
                   <TableCell>Medicine</TableCell>
-                  <TableCell>Dosage</TableCell>
-                  <TableCell>Prescribed By</TableCell>
-                  <TableCell align="right">Actions</TableCell>
+                  <TableCell>First Detected</TableCell>
+                  <TableCell>Last Detected</TableCell>
+                  <TableCell>Source</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {prescriptions.map((prescription, idx) => (
-                  <TableRow key={prescription.id || idx}>
+                {prescriptions && prescriptions.length > 0 ? prescriptions.map((medication, idx) => (
+                  <TableRow key={medication._id || idx}>
                     <TableCell>
                       <Box display="flex" alignItems="center" gap={1}>
                         <Box
@@ -43,29 +43,35 @@ export default function HistoryPanel({ prescriptions, medicalRecords, handleFile
                         >
                           💊
                         </Box>
-                        {prescription.medicine}
+                        {medication.term || medication.medicine || 'Unknown'}
                       </Box>
                     </TableCell>
                     <TableCell>
-                      {prescription.dosage}
-                      {prescription.frequency ? `, ${prescription.frequency}` : ''}
+                      {medication.firstSeen 
+                        ? new Date(medication.firstSeen).toLocaleDateString()
+                        : 'N/A'
+                      }
                     </TableCell>
-                    <TableCell>{prescription.prescribedBy}</TableCell>
-                    <TableCell align="right">
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        className="pd-btn-outline"
-                        sx={{ fontSize: '12px !important', padding: '4px 10px !important' }}
-                      >
-                        Request Refill
-                      </Button>
+                    <TableCell>
+                      {medication.lastSeen 
+                        ? new Date(medication.lastSeen).toLocaleDateString()
+                        : 'N/A'
+                      }
+                    </TableCell>
+                    <TableCell>
+                      {medication.sources && medication.sources.length > 0
+                        ? medication.sources.map((src, i) => (
+                            <div key={i} style={{ fontSize: '12px' }}>
+                              {src}
+                            </div>
+                          ))
+                        : 'N/A'
+                      }
                     </TableCell>
                   </TableRow>
-                ))}
-                {prescriptions.length === 0 && (
+                )) : (
                   <TableRow className="pd-empty-row">
-                    <TableCell colSpan={4}>No prescriptions on record</TableCell>
+                    <TableCell colSpan={4}>No medications on record</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -80,7 +86,7 @@ export default function HistoryPanel({ prescriptions, medicalRecords, handleFile
           <div className="pd-card-header">
             <div>
               <Typography className="pd-card-title">Medical Records</Typography>
-              <Typography className="pd-card-sub">View and download your medical history</Typography>
+              <Typography className="pd-card-sub">Uploaded medical files and reports</Typography>
             </div>
           </div>
 
@@ -88,39 +94,45 @@ export default function HistoryPanel({ prescriptions, medicalRecords, handleFile
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Type</TableCell>
-                  <TableCell>Description</TableCell>
+                  <TableCell>File Name</TableCell>
+                  <TableCell>Upload Date</TableCell>
+                  <TableCell>File Size</TableCell>
                   <TableCell align="right">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {medicalRecords.map((record, idx) => (
-                  <TableRow key={record.id || idx}>
+                {reports && reports.length > 0 ? reports.map((report, idx) => (
+                  <TableRow key={report._id || idx}>
                     <TableCell>
                       <Box display="flex" alignItems="center" gap={0.5}>
-                        📅
-                        {record.date}
+                        📄
+                        {report.originalName}
                       </Box>
                     </TableCell>
                     <TableCell>
-                      <span className={`pd-badge ${getTypeBadgeClass(record.type)}`}>
-                        {record.type}
-                      </span>
+                      {report.uploadDate 
+                        ? new Date(report.uploadDate).toLocaleString()
+                        : 'N/A'
+                      }
                     </TableCell>
-                    <TableCell>{record.description}</TableCell>
+                    <TableCell>
+                      {report.fileSize 
+                        ? `${(report.fileSize / 1024).toFixed(1)} KB`
+                        : 'N/A'
+                      }
+                    </TableCell>
                     <TableCell align="right">
                       <button
                         className="pd-btn-icon"
-                        onClick={() => handleFileDownload && handleFileDownload(record.id, record.description)}
+                        onClick={() => handleFileDownload && handleFileDownload(report._id, report.originalName)}
                         type="button"
+                        title="Download"
                       >
                         ⬇️
                       </button>
                     </TableCell>
                   </TableRow>
-                ))}
-                {medicalRecords.length === 0 && (
+                )) : (
                   <TableRow className="pd-empty-row">
                     <TableCell colSpan={4}>No medical records found</TableCell>
                   </TableRow>
@@ -133,15 +145,4 @@ export default function HistoryPanel({ prescriptions, medicalRecords, handleFile
 
     </Grid>
   );
-}
-
-function getTypeBadgeClass(type) {
-  const map = {
-    'Checkup': 'pd-badge-blue',
-    'Lab Report': 'pd-badge-purple',
-    'Imaging': 'pd-badge-green',
-    'Consultation': 'pd-badge-yellow',
-    'Vaccination': 'pd-badge-red',
-  };
-  return map[type] || 'pd-badge-blue';
 }

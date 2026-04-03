@@ -76,6 +76,21 @@ function PatientDashboard() {
         setReports(data.reports || []);
         setPrescriptions(data.prescriptions || []);
         setMedicalRecords(data.medicalRecords || []);
+
+        // Fetch main_info to get medications from NLP extraction
+        try {
+          const mainInfoResponse = await dashboardService.getMainInfo(token);
+          if (mainInfoResponse && mainInfoResponse.mainInfo) {
+            const medications = mainInfoResponse.mainInfo.medicalHistory?.medications || [];
+            if (isMounted && medications.length > 0) {
+              setPrescriptions(medications);
+            }
+          }
+        } catch (mainInfoErr) {
+          console.warn('Failed to fetch main_info:', mainInfoErr.message);
+          // Continue with existing prescriptions if main_info fetch fails
+        }
+
         if (initial) setLoading(false);
       } catch (err) {
         if (isMounted) setError(err.message || 'Failed to load dashboard');
@@ -433,6 +448,7 @@ function PatientDashboard() {
           <HistoryPanel
             prescriptions={prescriptions}
             medicalRecords={medicalRecords}
+            reports={reports}
             handleFileDownload={handleFileDownload}
           />
         )}
