@@ -21,6 +21,8 @@ import {
 import SendIcon from '@mui/icons-material/Send';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
+const CHATBOT_API_URL = process.env.REACT_APP_CHATBOT_API_URL || 'http://127.0.0.1:8000';
+
 const ChatBot = ({ open, onClose, doctorName, token }) => {
   const [step, setStep] = useState('greeting'); // 'greeting', 'selectPatient', 'chat'
   const [patients, setPatients] = useState([]);
@@ -50,19 +52,22 @@ const ChatBot = ({ open, onClose, doctorName, token }) => {
   const fetchPatients = async () => {
     try {
       setPatientLoading(true);
-      // Fetch from Node backend - doctor's patients
-      const response = await fetch('http://localhost:5000/api/patient/list', {
+      const response = await fetch(`${CHATBOT_API_URL}/patients`, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Accept': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
-        throw new Error('Failed to fetch patients');
+        throw new Error(`Chatbot patient list error: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      setPatients(data.patients || []);
+      if (Array.isArray(data) && data.length > 0) {
+        setPatients(data);
+      } else {
+        setPatients([]);
+      }
     } catch (error) {
       console.error('Failed to fetch patients:', error);
       setPatients([]);
@@ -96,10 +101,10 @@ const ChatBot = ({ open, onClose, doctorName, token }) => {
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setLoading(true);
+    let currentBotMessage = { type: 'bot', text: '', timestamp: new Date() };
 
     try {
-      // Send to FastAPI chatbot
-      const response = await fetch('http://localhost:8000/chat', {
+      const response = await fetch(`${CHATBOT_API_URL}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -111,17 +116,65 @@ const ChatBot = ({ open, onClose, doctorName, token }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get response from chatbot');
+        const errorText = await response.text();
+        throw new Error(`Chatbot HTTP ${response.status}: ${errorText}`);
       }
 
-      const data = await response.json();
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let completedText = '';
+      let messageAppended = false;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+
+        const events = chunk.split(/\n\n/).filter(Boolean);
+        for (const event of events) {
+          if (!event.startsWith('data:')) continue;
+          const payload = event.replace(/^data:\s*/, '');
+          try {
+            const parsed = JSON.parse(payload);
+            if (parsed.type === 'message') {
+              completedText += parsed.content;
+
+              if (!messageAppended) {
+                setMessages(prev => [...prev, currentBotMessage]);
+                messageAppended = true;
+              }
+
+              setMessages(prev => {
+                const updated = [...prev];
+                const idx = updated.length - 1;
+                if (updated[idx]?.type === 'bot') {
+                  updated[idx] = { ...updated[idx], text: completedText, timestamp: new Date() };
+                }
+                return updated;
+              });
+            } else if (parsed.type === 'error') {
+              throw new Error(parsed.content);
+            }
+          } catch (err) {
+            // Partial JSON chunk may happen; ignore and continue
+          }
+        }
+      }
 
       const botMessage = {
         type: 'bot',
-        text: data.summary || 'Unable to process your question. Please try again.',
+        text: completedText || 'No response received',
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, botMessage]);
+      setMessages(prev => {
+        if (messageAppended) {
+          const updated = [...prev];
+          updated[updated.length - 1] = botMessage;
+          return updated;
+        }
+        return [...prev, botMessage];
+      });
+
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage = {

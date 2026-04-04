@@ -27,7 +27,8 @@ import {
   Person,
   Description,
   History,
-  Share
+  Share,
+  SmartToy
 } from '@mui/icons-material';
 import { toPng } from 'html-to-image';
 import { useNavigate } from 'react-router-dom';
@@ -36,6 +37,7 @@ import './PatientDashboard.css';
 import SettingsForm from './SettingsForm';
 import MedicardPanel from './MedicardPanel';
 import HistoryPanel from './HistoryPanel';
+import Chatbot from '../../Chatbot';
 
 function PatientDashboard() {
   const navigate = useNavigate();
@@ -295,6 +297,7 @@ function PatientDashboard() {
             <Tab value="documents" label="Documents"        icon={<Description />} iconPosition="start" />
             <Tab value="history"   label="Summary of Records"          icon={<History />}     iconPosition="start" />
             <Tab value="medicard"  label="Medicard"         icon={<FilePresent />} iconPosition="start" />
+            <Tab value="chatbot"   label="AI Assistant"     icon={<SmartToy />}    iconPosition="start" />
             <Tab value="settings"  label="Profile Settings" icon={<Person />}      iconPosition="start" />
           </Tabs>
         </Paper>
@@ -464,6 +467,23 @@ function PatientDashboard() {
             setCardError={setCardError}
             emergencyQrPayload={emergencyQrPayload}
           />
+        )}
+
+        {/* AI ASSISTANT CHATBOT */}
+        {activeTab === 'chatbot' && (
+          <Paper 
+            className="pd-card" 
+            elevation={0}
+            sx={{ 
+              height: 'calc(100vh - 250px)', 
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              background: '#fff'
+            }}
+          >
+            <Chatbot />
+          </Paper>
         )}
 
         {/* SETTINGS */}
