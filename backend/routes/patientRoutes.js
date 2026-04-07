@@ -331,4 +331,80 @@ router.get('/list', auth, checkRole(['doctor']), async (req, res) => {
     }
 });
 
+// Get hospital-uploaded reports for the current patient
+router.get('/hospital-reports', auth, checkRole(['patient']), async (req, res) => {
+    try {
+        const patient = await Patient.findById(req.user.id).select('reports');
+        
+        if (!patient) {
+            return res.status(404).json({
+                ok: false,
+                message: 'Patient not found'
+            });
+        }
+
+        res.json({
+            ok: true,
+            reports: patient.reports || []
+        });
+    } catch (error) {
+        console.error('Get hospital reports error:', error);
+        res.status(500).json({
+            ok: false,
+            message: 'Error fetching hospital reports'
+        });
+    }
+});
+
+// Delete a report
+router.delete('/reports/:reportId', auth, checkRole(['patient']), async (req, res) => {
+    try {
+        const { reportId } = req.params;
+        const patient = await Patient.findById(req.user.id);
+
+        if (!patient) {
+            return res.status(404).json({
+                ok: false,
+                message: 'Patient not found'
+            });
+        }
+
+        // Find the report index
+        const reportIndex = patient.reports.findIndex(report => report._id.toString() === reportId);
+
+        if (reportIndex === -1) {
+            return res.status(404).json({
+                ok: false,
+                message: 'Report not found'
+            });
+        }
+
+        // Delete file from system if it exists
+        const reportFilePath = patient.reports[reportIndex].filePath;
+        if (fs.existsSync(reportFilePath)) {
+            try {
+                fs.unlinkSync(reportFilePath);
+            } catch (fsError) {
+                console.error('Error deleting file:', fsError);
+                // Continue even if file deletion fails
+            }
+        }
+
+        // Remove report from array
+        patient.reports.splice(reportIndex, 1);
+        await patient.save();
+
+        res.json({
+            ok: true,
+            message: 'Report deleted successfully'
+        });
+    } catch (error) {
+        console.error('Delete report error:', error);
+        res.status(500).json({
+            ok: false,
+            message: 'Error deleting report'
+        });
+    }
+});
+
 export default router;

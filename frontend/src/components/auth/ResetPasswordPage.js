@@ -50,7 +50,7 @@ function ResetPasswordPage({ onNavigate }) {
         },
         body: JSON.stringify({
           token,
-          newPassword,
+          password: newPassword,
           confirmPassword,
           userType,
         }),

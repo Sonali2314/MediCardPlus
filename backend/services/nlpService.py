@@ -8,12 +8,20 @@ import json
 import re
 from pathlib import Path
 
-# Try to import pdf libraries
+# Try to import pdf and docx libraries
 try:
     import PyPDF2
     HAS_PYPDF = True
 except ImportError:
     HAS_PYPDF = False
+    sys.stderr.write("Warning: PyPDF2 not installed - PDF extraction disabled\n")
+
+try:
+    from docx import Document
+    HAS_DOCX = True
+except ImportError:
+    HAS_DOCX = False
+    sys.stderr.write("Warning: python-docx not installed - DOCX extraction disabled\n")
 
 # Medical keywords dictionary
 MEDICAL_KEYWORDS = {
@@ -74,6 +82,35 @@ def extract_text_from_pdf(file_path):
         return text
     except Exception as e:
         sys.stderr.write(f"PDF extraction error: {str(e)}\n")
+        return ""
+
+
+def extract_text_from_docx(file_path):
+    """Extract text from DOCX file using python-docx"""
+    try:
+        if not HAS_DOCX:
+            sys.stderr.write("Warning: python-docx not installed\n")
+            return ""
+        
+        text = ""
+        doc = Document(file_path)
+        
+        for para in doc.paragraphs:
+            if para.text:
+                text += para.text + "\n"
+        
+        # Also extract text from tables
+        for table in doc.tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    if cell.text:
+                        text += cell.text + " "
+            text += "\n"
+        
+        sys.stderr.write(f"Extracted {len(text)} characters from DOCX\n")
+        return text
+    except Exception as e:
+        sys.stderr.write(f"DOCX extraction error: {str(e)}\n")
         return ""
 
 
@@ -142,17 +179,22 @@ def process_file(file_path):
     
     try:
         # Extract text based on file type
-        if file_path.suffix.lower() == '.pdf':
+        file_ext = file_path.suffix.lower()
+        
+        if file_ext == '.pdf':
             sys.stderr.write(f"Processing PDF: {file_path}\n")
             text = extract_text_from_pdf(str(file_path))
+        elif file_ext in ['.docx', '.doc']:
+            sys.stderr.write(f"Processing DOCX: {file_path}\n")
+            text = extract_text_from_docx(str(file_path))
         else:
             return {
                 "success": False,
-                "error": f"Unsupported file type: {file_path.suffix}"
+                "error": f"Unsupported file type: {file_ext}"
             }
         
         if not text or len(text.strip()) == 0:
-            sys.stderr.write("No text extracted from PDF\n")
+            sys.stderr.write("No text extracted from file\n")
             return {
                 "success": True,
                 "extracted_data": {
@@ -162,7 +204,7 @@ def process_file(file_path):
                     "tests": [],
                     "raw_text_length": 0
                 },
-                "warning": "No text could be extracted from the PDF"
+                "warning": f"No text could be extracted from the {file_ext} file"
             }
         
         # Extract medical information

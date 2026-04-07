@@ -173,6 +173,39 @@ function PatientDashboard() {
     }
   };
 
+  const handleDeleteReport = async (reportId) => {
+    if (!window.confirm('Are you sure you want to delete this report? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const apiUrl = 'http://localhost:5000/api';
+      const response = await fetch(`${apiUrl}/patient/reports/${reportId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+      if (data.ok) {
+        setUploadSuccess('Report deleted successfully');
+        // Refresh reports list
+        const user = JSON.parse(localStorage.getItem('user'));
+        const updatedResponse = await dashboardService.getPatientDashboard(user.id, token);
+        const updatedData = updatedResponse.data || updatedResponse;
+        setReports(updatedData.reports || []);
+        // Clear success message after 3 seconds
+        setTimeout(() => setUploadSuccess(null), 3000);
+      } else {
+        setUploadError(data.message || 'Failed to delete report');
+      }
+    } catch (error) {
+      setUploadError('Error deleting report: ' + error.message);
+    }
+  };
+
   const handleDownloadEmergencyCard = async () => {
     if (!cardRef.current) return;
     setCardError(null);
@@ -399,8 +432,8 @@ function PatientDashboard() {
               <Paper className="pd-card" elevation={0}>
                 <div className="pd-card-header">
                   <div>
-                    <Typography className="pd-card-title">My Medical Reports</Typography>
-                    <Typography className="pd-card-sub">View and download your uploaded reports</Typography>
+                    <Typography className="pd-card-title">Medical Reports</Typography>
+                    <Typography className="pd-card-sub">View all your medical reports from uploads and hospital</Typography>
                   </div>
                 </div>
                 <TableContainer className="pd-table-wrap">
@@ -420,13 +453,24 @@ function PatientDashboard() {
                           <TableCell>{new Date(report.uploadDate).toLocaleDateString()}</TableCell>
                           <TableCell>{(report.fileSize / 1024).toFixed(2)} KB</TableCell>
                           <TableCell align="right">
-                            <IconButton
-                              onClick={() => handleFileDownload(report._id, report.originalName)}
-                              size="small"
-                              sx={{ color: 'var(--color-primary)' }}
-                            >
-                              <DownloadForOffline />
-                            </IconButton>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
+                              <IconButton
+                                onClick={() => handleFileDownload(report._id, report.originalName)}
+                                size="small"
+                                sx={{ color: 'var(--color-primary)' }}
+                                title="Download"
+                              >
+                                <DownloadForOffline fontSize="small" />
+                              </IconButton>
+                              <IconButton
+                                onClick={() => handleDeleteReport(report._id)}
+                                size="small"
+                                sx={{ color: '#d32f2f' }}
+                                title="Delete"
+                              >
+                                <i className="fas fa-trash" style={{ fontSize: '14px' }}></i>
+                              </IconButton>
+                            </Box>
                           </TableCell>
                         </TableRow>
                       ))}

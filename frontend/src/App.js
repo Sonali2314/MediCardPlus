@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import LoginPage from './components/auth/LoginPage';
 import SignupPage from './components/auth/SignupPage';
+import ForgotPasswordPage from './components/auth/ForgotPasswordPage';
+import ResetPasswordPage from './components/auth/ResetPasswordPage';
 import HomePage from './components/home/HomePage';
 import DoctorDashboard from './components/Dashboard/doctor/DoctorDashboard';
 import HospitalDashboard from './components/Dashboard/hospital/HospitalDashboard';
@@ -17,6 +19,8 @@ function AppRoutes({ currentUser, setCurrentUser }) {
       case 'home': return '/';
       case 'login': return '/login';
       case 'signup': return '/signup';
+      case 'forgot-password': return '/forgot-password';
+      case 'reset-password': return '/reset-password';
       case 'doctor': return '/doctor';
       case 'hospital': return '/hospital';
       case 'patient': return '/patient';
@@ -63,6 +67,8 @@ function AppRoutes({ currentUser, setCurrentUser }) {
       <Route path="/" element={<HomePage onNavigate={handleNavigate} />} />
       <Route path="/login" element={<LoginPage onNavigate={handleNavigate} />} />
       <Route path="/signup" element={<SignupPage onNavigate={handleNavigate} />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage onNavigate={handleNavigate} />} />
+      <Route path="/reset-password" element={<ResetPasswordPage onNavigate={handleNavigate} />} />
       <Route path="/doctor" element={
         <ProtectedRoute 
           allowedUserType="doctor" 

@@ -161,52 +161,148 @@ def query_huggingface(prompt: str, max_tokens: int = 512) -> str:
             
     except requests.exceptions.RequestException as e:
         logger.error(f"HuggingFace API Error: {e}")
-        # Fallback to mock response for demo
-        return generate_mock_response(prompt)
+        # Fallback to response - will be handled dynamically
+        return None
 
-def generate_mock_response(prompt: str) -> str:
+def is_greeting(question: str) -> bool:
     """
-    Fallback mock response when API is unavailable or for quick testing
+    Check if the question is a greeting
     """
-    if "medication" in prompt.lower() or "drug" in prompt.lower():
-        return """**Current Medications:**
-
-Based on the patient's medical records:
-- Current medications extracted from medical history
-- Dosing information from available records
-- Date of last update noted in system
-
-**Note:** Please verify with patient for most up-to-date medication list."""
+    greetings = ['hello', 'hi', 'hey', 'greetings', 'good morning', 'good afternoon', 'good evening', 'howdy', 'what\'s up']
+    question_lower = question.lower().strip()
     
-    elif "history" in prompt.lower() or "condition" in prompt.lower():
-        return """**Medical History Summary:**
-
-Based on the extracted medical records:
-- Key diagnoses and conditions identified
-- Important medical events in timeline
-- Current status of chronic conditions
-
-**Assessment:** Please consult the full medical record for complete details."""
+    # Check if the question is exactly a greeting or starts with greeting
+    for greeting in greetings:
+        if question_lower == greeting or question_lower.startswith(greeting):
+            return True
     
-    elif "symptom" in prompt.lower():
-        return """**Patient Symptoms:**
+    return False
 
-Symptoms extracted from medical records:
-- Documented symptoms from patient reports
-- Symptom onset and timeline
-- Current symptom status
+def get_greeting_response() -> str:
+    """
+    Return a friendly greeting response with suggestions
+    """
+    return """Hi there! 👋 Welcome to the Medical Chatbot!
 
-**Note:** Consider collecting updated symptom information from patient."""
+I'm here to help you understand the patient's medical history. You can ask me about:
+
+💊 Medications - "What medications is the patient on?"
+🏥 Conditions - "What medical conditions does the patient have?"
+⚠️  Symptoms - "What symptoms does the patient have?"
+🔬 Tests - "What medical tests have been conducted?"
+📋 Summary - "Give me a summary of the patient's medical history"
+
+Just ask your question and I'll provide you with relevant information from the patient's medical records!
+    """
+
+def generate_paragraph_summary(patient_main_info: dict, category: str = "all") -> str:
+    """
+    Generate a readable summary of patient's medical history with sections based on category
     
+    category options: "all", "medications", "diagnoses", "symptoms", "tests"
+    """
+    if not patient_main_info:
+        return "No patient medical history available."
+    
+    medical_history = patient_main_info.get('medicalHistory', {})
+    personal_info = patient_main_info.get('personalInfo', {})
+    
+    # Extract data
+    symptoms = [s.get('term', s) if isinstance(s, dict) else s for s in medical_history.get('symptoms', [])]
+    medications = [m.get('term', m) if isinstance(m, dict) else m for m in medical_history.get('medications', [])]
+    diagnoses = [d.get('term', d) if isinstance(d, dict) else d for d in medical_history.get('diagnoses', [])]
+    tests = [t.get('term', t) if isinstance(t, dict) else t for t in medical_history.get('tests', [])]
+    
+    # Build formatted output with clear sections
+    output = []
+    
+    # Patient Information Section
+    patient_name = personal_info.get('fullName', 'Patient')
+    age = personal_info.get('age', '')
+    gender = personal_info.get('gender', '')
+    blood_group = personal_info.get('bloodGroup', '')
+    
+    demo_parts = [patient_name]
+    if gender:
+        demo_parts.append(gender)
+    if age:
+        demo_parts.append(f"Age: {age}")
+    if blood_group:
+        demo_parts.append(f"Blood Type: {blood_group}")
+    
+    # Add last updated to patient info only
+    updated_at = patient_main_info.get('updatedAt', '')
+    last_updated_str = ""
+    if updated_at:
+        from datetime import datetime
+        try:
+            date_obj = datetime.fromisoformat(updated_at.replace('Z', '+00:00'))
+            formatted_date = date_obj.strftime('%b %d, %Y')
+            last_updated_str = f" | Last Updated: {formatted_date}"
+        except:
+            pass
+    
+    output.append("=" * 51)
+    output.append("PATIENT MEDICAL SUMMARY")
+    output.append("=" * 51)
+    output.append(f"\n👤 PATIENT INFORMATION:\n   {', '.join(demo_parts)}{last_updated_str}\n")
+    
+    # Show relevant sections based on category
+    if category == "all" or category == "diagnoses":
+        if diagnoses:
+            output.append("🏥 MEDICAL CONDITIONS:")
+            for i, diagnosis in enumerate(diagnoses, 1):
+                output.append(f"   {i}. {diagnosis.title()}")
+            output.append("")
+    
+    if category == "all" or category == "medications":
+        if medications:
+            output.append("💊 CURRENT MEDICATIONS:")
+            for i, med in enumerate(medications, 1):
+                output.append(f"   {i}. {med.title()}")
+            output.append("")
+    
+    if category == "all" or category == "symptoms":
+        if symptoms:
+            output.append("⚠️  SYMPTOMS:")
+            for i, symptom in enumerate(symptoms, 1):
+                output.append(f"   {i}. {symptom.title()}")
+            output.append("")
+    
+    if category == "all" or category == "tests":
+        if tests:
+            output.append("🔬 MEDICAL TESTS CONDUCTED:")
+            for i, test in enumerate(tests, 1):
+                output.append(f"   {i}. {test.title()}")
+            output.append("")
+    
+    output.append("=" * 51)
+    
+    return "\n".join(output)
+
+def generate_mock_response(prompt: str, patient_main_info: dict = None) -> str:
+    """
+    Fallback response when API is unavailable - shows only relevant sections based on question
+    """
+    if not patient_main_info:
+        return "No patient data available to generate summary."
+    
+    # Determine what category the question is asking about
+    prompt_lower = prompt.lower()
+    
+    if "medication" in prompt_lower or "drug" in prompt_lower or "medicine" in prompt_lower:
+        category = "medications"
+    elif "diagnos" in prompt_lower or "condition" in prompt_lower or "disease" in prompt_lower or "history" in prompt_lower:
+        category = "diagnoses"
+    elif "symptom" in prompt_lower or "sign" in prompt_lower:
+        category = "symptoms"
+    elif "test" in prompt_lower or "result" in prompt_lower or "lab" in prompt_lower:
+        category = "tests"
     else:
-        return """**Patient Information Summary:**
-
-Based on available medical records in the system:
-- Key medical information extracted from documents
-- Recent medical events and updates
-- Relevant clinical history
-
-Please specify if you need information about a particular aspect of the patient's history."""
+        category = "all"
+    
+    # Generate summary with only relevant sections
+    return generate_paragraph_summary(patient_main_info, category)
 
 @app.get("/")
 async def root():
@@ -225,39 +321,66 @@ async def chat(request: ChatRequest):
     Uses patient main_info.json extracted from medical documents
     """
     try:
+        # Check if the question is a greeting
+        if is_greeting(request.question):
+            return ChatResponse(
+                patient="Assistant",
+                patient_id=request.patient_id,
+                question=request.question,
+                summary=get_greeting_response()
+            )
+        
         # Load patient main_info from filesystem
         patient_main_info = get_patient_main_info(request.patient_id)
         
         if not patient_main_info:
             logger.warning(f"No main_info found for patient {request.patient_id}, continuing without extracted data")
         
-        # Format medical history from main_info
-        medical_history_text = format_medical_history(patient_main_info) if patient_main_info else "No extracted medical data available"
-        
         # Get patient name from main_info if available
-        patient_name = patient_main_info.get('patientName', 'Patient') if patient_main_info else 'Patient'
+        if patient_main_info:
+            patient_name = patient_main_info.get('personalInfo', {}).get('fullName', 'Patient')
+        else:
+            patient_name = 'Patient'
+        
+        # Determine question category to show only relevant info
+        question_lower = request.question.lower()
+        if "medication" in question_lower or "drug" in question_lower or "medicine" in question_lower:
+            category = "medications"
+        elif "diagnos" in question_lower or "condition" in question_lower or "disease" in question_lower or "history" in question_lower:
+            category = "diagnoses"
+        elif "symptom" in question_lower or "sign" in question_lower:
+            category = "symptoms"
+        elif "test" in question_lower or "result" in question_lower or "lab" in question_lower:
+            category = "tests"
+        else:
+            category = "all"
+        
+        # Generate paragraph summary of medical history based on question category
+        medical_history_summary = generate_paragraph_summary(patient_main_info, category) if patient_main_info else "No extracted medical data available"
         
         # Create medical-focused prompt
         system_prompt = """You are a medical AI assistant helping doctors analyze patient records. 
-Provide concise, bullet-point summaries focusing on clinically relevant information.
-Be specific and reference the medical data. Format your response with clear headers and bullet points.
+Provide concise responses in paragraph format focusing on clinically relevant information.
+Be specific and reference the medical data provided.
 If information is not available in the patient records, state so clearly."""
         
         full_prompt = f"""{system_prompt}
 
-Patient: {patient_name}
-
-Medical Records (Extracted from uploaded documents):
-{medical_history_text}
+Patient Medical History Summary:
+{medical_history_summary}
 
 Doctor's Question: {request.question}
 
-Please provide a structured summary based on the patient's records with relevant bullet points:"""
+Please provide a response based on the patient's medical history:"""
 
         logger.info(f"Processing chat request for patient {request.patient_id}")
         
         # Query HuggingFace API
         response_text = query_huggingface(full_prompt)
+        
+        # If API fails or returns None, use actual patient data
+        if not response_text:
+            response_text = generate_mock_response(request.question, patient_main_info)
         
         return ChatResponse(
             patient=patient_name,
