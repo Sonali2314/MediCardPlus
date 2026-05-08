@@ -1,12 +1,22 @@
 import { exec } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import os from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Path to Python NLP service
 const PYTHON_NLP_SERVICE = path.join(__dirname, 'nlpService.py');
+
+// Determine Python executable path
+let PYTHON_EXECUTABLE = 'python';
+if (process.platform === 'win32') {
+    // On Windows, try to use the full path to ensure packages are found
+    PYTHON_EXECUTABLE = 'python';
+} else {
+    PYTHON_EXECUTABLE = 'python3';
+}
 
 /**
  * Call Python NLP service to extract medical information from a file
@@ -21,7 +31,7 @@ const extractInfoFromFile = async (filePath, fileType) => {
         // Build command with properly quoted paths for Windows
         const quotedFilePath = `"${filePath}"`;
         const quotedPythonScript = `"${PYTHON_NLP_SERVICE}"`;
-        const command = `python ${quotedPythonScript} ${quotedFilePath}`;
+        const command = `${PYTHON_EXECUTABLE} ${quotedPythonScript} ${quotedFilePath}`;
         
         console.log(`[NLP] Executing command: ${command}`);
 

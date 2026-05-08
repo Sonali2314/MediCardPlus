@@ -142,6 +142,17 @@ const dashboardService = {
         const data = await response.json();
         if (!response.ok) throw new Error(data.message);
         return data;
+    },
+
+    getHospitalReports: async (token) => {
+        const response = await fetch(`${API_URL}/patient/hospital-reports`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message);
+        return data;
     }
 };
 

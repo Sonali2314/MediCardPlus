@@ -54,7 +54,9 @@ const doctorSchema = new mongoose.Schema({
     patients: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Patient'
-    }]
+    }],
+    passwordResetToken: { type: String },
+    passwordResetExpires: { type: Date }
 }, {
     timestamps: true
 });

@@ -146,7 +146,13 @@ function LoginPage({ onNavigate }) {
               <input type="checkbox" />
               <span>Remember me</span>
             </label>
-            <button className="forgot-password">Forgot password?</button>
+            <button 
+              type="button"
+              className="forgot-password"
+              onClick={() => onNavigate && onNavigate('forgot-password')}
+            >
+              Forgot password?
+            </button>
           </div>
 
           <button

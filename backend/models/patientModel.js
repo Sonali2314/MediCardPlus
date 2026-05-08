@@ -50,7 +50,17 @@ const patientSchema = new mongoose.Schema({
         filePath: { type: String, required: true },
         uploadDate: { type: Date, default: Date.now },
         fileSize: { type: Number, required: true }
-    }]
+    }],
+    hospital: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Hospital'
+    },
+    addedByHospital: {
+        type: Boolean,
+        default: false
+    },
+    passwordResetToken: { type: String },
+    passwordResetExpires: { type: Date }
 }, {
     timestamps: true
 });

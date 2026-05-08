@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -9,6 +10,7 @@ import Doctor from './models/doctorModel.js';
 import Patient from './models/patientModel.js';
 import Hospital from './models/hospitalModel.js';
 import authMiddleware from './middleware/auth.js';
+import emailService from './services/emailService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -247,6 +249,126 @@ app.post('/api/login', async (req, res) => {
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ ok: false, message: 'Error during login' });
+    }
+});
+
+// Forgot Password endpoint
+app.post('/api/forgot-password', async (req, res) => {
+    try {
+        const { email, userType } = req.body;
+
+        if (!email || !userType) {
+            return res.status(400).json({ ok: false, message: 'Email and user type are required' });
+        }
+
+        const normalizedUserType = userType.toLowerCase();
+
+        // Select appropriate model
+        let UserModel;
+        switch (normalizedUserType) {
+            case 'doctor':
+                UserModel = Doctor;
+                break;
+            case 'patient':
+                UserModel = Patient;
+                break;
+            case 'hospital':
+                UserModel = Hospital;
+                break;
+            default:
+                return res.status(400).json({ ok: false, message: 'Invalid user type' });
+        }
+
+        // Find user by email
+        const user = await UserModel.findOne({ email: email.toLowerCase() });
+        if (!user) {
+            return res.status(404).json({ ok: false, message: 'Email not found' });
+        }
+
+        // Generate reset token
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+        // Save hashed token and expiry to user
+        user.passwordResetToken = hashedToken;
+        user.passwordResetExpires = new Date(Date.now() + 3600000); // 1 hour from now
+        await user.save();
+
+        // Send email
+        await emailService.sendPasswordResetEmail(user.email, resetToken, normalizedUserType);
+
+        res.json({
+            ok: true,
+            message: 'Password reset link sent to your email',
+            token: resetToken // For development/testing
+        });
+    } catch (error) {
+        console.error('Forgot password error:', error);
+        res.status(500).json({ ok: false, message: 'Error processing forgot password request' });
+    }
+});
+
+// Reset Password endpoint
+app.post('/api/reset-password', async (req, res) => {
+    try {
+        const { token, password, confirmPassword, userType } = req.body;
+
+        if (!token || !password || !confirmPassword || !userType) {
+            return res.status(400).json({ ok: false, message: 'All fields are required' });
+        }
+
+        if (password !== confirmPassword) {
+            return res.status(400).json({ ok: false, message: 'Passwords do not match' });
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({ ok: false, message: 'Password must be at least 6 characters' });
+        }
+
+        const normalizedUserType = userType.toLowerCase();
+
+        // Select appropriate model
+        let UserModel;
+        switch (normalizedUserType) {
+            case 'doctor':
+                UserModel = Doctor;
+                break;
+            case 'patient':
+                UserModel = Patient;
+                break;
+            case 'hospital':
+                UserModel = Hospital;
+                break;
+            default:
+                return res.status(400).json({ ok: false, message: 'Invalid user type' });
+        }
+
+        // Hash token to compare with stored hash
+        const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+        // Find user with matching token and valid expiry
+        const user = await UserModel.findOne({
+            passwordResetToken: hashedToken,
+            passwordResetExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.status(400).json({ ok: false, message: 'Invalid or expired reset token' });
+        }
+
+        // Update password
+        user.password = password;
+        user.passwordResetToken = undefined;
+        user.passwordResetExpires = undefined;
+        await user.save();
+
+        res.json({
+            ok: true,
+            message: 'Password has been reset successfully. Please login with your new password.'
+        });
+    } catch (error) {
+        console.error('Reset password error:', error);
+        res.status(500).json({ ok: false, message: 'Error resetting password' });
     }
 });
 

@@ -31,6 +31,7 @@ import {
   MedicalServices
 } from '@mui/icons-material';
 import DoctorManagement from './DoctorManagement';
+import PatientManagement from './PatientManagement';
 import dashboardService from '../../../services/dashboardService';
 import './HospitalDashboard.css';
 
@@ -312,6 +313,7 @@ function HospitalDashboard() {
         <Paper className="hd-tabs-card" elevation={0}>
           <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)}>
             <Tab label="Doctor Management" />
+            <Tab label="Patient Management" />
             <Tab label="Departments" />
             <Tab label="Settings" />
           </Tabs>
@@ -319,7 +321,9 @@ function HospitalDashboard() {
           <div className="hd-tab-content">
             {activeTab === 0 && <DoctorManagement />}
 
-            {activeTab === 1 && (
+            {activeTab === 1 && <PatientManagement />}
+
+            {activeTab === 2 && (
               <div>
                 <Typography className="hd-card-title" sx={{ mb: 3 }}>Departments Overview</Typography>
                 {departments.length === 0 ? (
@@ -352,7 +356,7 @@ function HospitalDashboard() {
               </div>
             )}
 
-            {activeTab === 2 && (
+            {activeTab === 3 && (
               <form onSubmit={handleSettingsSave} className="hd-settings-form">
                 <Typography className="hd-settings-title">Contact & Facility Settings</Typography>
                 <Grid container spacing={2}>
